@@ -7,7 +7,7 @@ metadata:
     app: stash-demo
   # if stash find bellow annotations, it will take backup of it.
   annotations:
-    stash.appscode.com/backup: true
+    stash.appscode.com/defaultbackupconfiguration: "workload-data-default-backup-configuration"
     stash.appscode.com/targetDirectories: "[/source/data]"
 spec:
   replicas: 1

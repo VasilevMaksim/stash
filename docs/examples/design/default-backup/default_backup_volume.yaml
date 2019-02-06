@@ -5,8 +5,7 @@ metadata:
   namespace: demo
   # if stash find bellow annotations, it will take backup of it.
   annotations:
-    stash.appscode.com/backup: true
-    stash.appscode.com/stashTemplate: "volumeBackup"
+    stash.appscode.com/defaultbackupconfiguration: "volume-default-backup-configuration"
 spec:
   accessModes:
   - ReadWriteMany

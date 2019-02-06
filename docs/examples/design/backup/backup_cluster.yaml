@@ -5,8 +5,8 @@ metadata:
   namespace: demo
 spec:
   schedule: '@every 1h'
-  # stashTemplate indicates StashTemplate crd to use for backup the cluster.
-  stashTemplate: clusterBackup
+  # backupProcedure indicates Procedure crd that specifies the steps of backup cluster yamls
+  backupProcedure: clusterBackup
   # repository refers to the Repository crd that hold backend information
   repository:
     name: stash-backup-repo

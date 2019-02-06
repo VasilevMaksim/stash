@@ -1,0 +1,28 @@
+# clusterBackup specifies required actions and their inputs to backup cluster yaml
+apiVersion: stash.appscode.com/v1alpha2
+kind: Procedure
+metadata:
+  name: clusterBackup
+spec:
+  actions:
+  - name: clusterBackup
+    inputs:
+      sanitize: ${sanitize}
+      provider: ${provider}
+      hostname: ${hostname}
+      repoDir: ${prefix}
+      outputDir: ${outputDir}
+      policy: ${retentionPolicyName}
+      retentionValue: ${retentionPolicyValue}
+      enableMetric: ${enableMetric}
+      pushgatewayURL: ${pushgatewayURL}
+      workloadKind: ${kind}
+      workloadName: ${name}
+      tempVolumeName: ${tmpVolumeName}
+      storageSecretName: ${secretName}
+  - name: stashPostBackup
+    inputs:
+      repoName: ${repoName}
+      backupInstanceName: ${backupInstanceName}
+      outputJsonDir: ${output-dir}
+      outputVolumeName: ${output-volume-name}

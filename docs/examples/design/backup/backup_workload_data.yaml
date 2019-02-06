@@ -1,11 +1,11 @@
 apiVersion: stash.appscode.com/v1alpha2
 kind: BackupConfiguration
 metadata:
-  name: backup-workload-data
+  name: workload-data-backup
   namespace: demo
 spec:
   schedule: '@every 1h'
-  # <no stashTemplate required for sidecar model>
+  # <no backupProcedure required for sidecar model>
   # repository refers to the Repository crd that hold backend information
   repository:
     name: stash-backup-repo
@@ -22,13 +22,3 @@ spec:
   retentionPolicy:
     keepLast: 5
     prune: true
-  # containerAttributes is an optional field that can be use to set some attributes 
-  # like resources, securityContext etc. to backup sidecar container
-  containerAttributes:
-    resources:
-      requests:
-        memory: "64Mi"
-        cpu: "250m"
-      limits:
-        memory: "128Mi"
-        cpu: "500m"
