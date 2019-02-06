@@ -31,58 +31,58 @@ import (
 	cache "k8s.io/client-go/tools/cache"
 )
 
-// StashTemplateInformer provides access to a shared informer and lister for
-// StashTemplates.
-type StashTemplateInformer interface {
+// ProcedureInformer provides access to a shared informer and lister for
+// Procedures.
+type ProcedureInformer interface {
 	Informer() cache.SharedIndexInformer
-	Lister() v1alpha2.StashTemplateLister
+	Lister() v1alpha2.ProcedureLister
 }
 
-type stashTemplateInformer struct {
+type procedureInformer struct {
 	factory          internalinterfaces.SharedInformerFactory
 	tweakListOptions internalinterfaces.TweakListOptionsFunc
 }
 
-// NewStashTemplateInformer constructs a new informer for StashTemplate type.
+// NewProcedureInformer constructs a new informer for Procedure type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewStashTemplateInformer(client versioned.Interface, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
-	return NewFilteredStashTemplateInformer(client, resyncPeriod, indexers, nil)
+func NewProcedureInformer(client versioned.Interface, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
+	return NewFilteredProcedureInformer(client, resyncPeriod, indexers, nil)
 }
 
-// NewFilteredStashTemplateInformer constructs a new informer for StashTemplate type.
+// NewFilteredProcedureInformer constructs a new informer for Procedure type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewFilteredStashTemplateInformer(client versioned.Interface, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
+func NewFilteredProcedureInformer(client versioned.Interface, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
 	return cache.NewSharedIndexInformer(
 		&cache.ListWatch{
 			ListFunc: func(options v1.ListOptions) (runtime.Object, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.StashV1alpha2().StashTemplates().List(options)
+				return client.StashV1alpha2().Procedures().List(options)
 			},
 			WatchFunc: func(options v1.ListOptions) (watch.Interface, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.StashV1alpha2().StashTemplates().Watch(options)
+				return client.StashV1alpha2().Procedures().Watch(options)
 			},
 		},
-		&stashv1alpha2.StashTemplate{},
+		&stashv1alpha2.Procedure{},
 		resyncPeriod,
 		indexers,
 	)
 }
 
-func (f *stashTemplateInformer) defaultInformer(client versioned.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
-	return NewFilteredStashTemplateInformer(client, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
+func (f *procedureInformer) defaultInformer(client versioned.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
+	return NewFilteredProcedureInformer(client, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
 }
 
-func (f *stashTemplateInformer) Informer() cache.SharedIndexInformer {
-	return f.factory.InformerFor(&stashv1alpha2.StashTemplate{}, f.defaultInformer)
+func (f *procedureInformer) Informer() cache.SharedIndexInformer {
+	return f.factory.InformerFor(&stashv1alpha2.Procedure{}, f.defaultInformer)
 }
 
-func (f *stashTemplateInformer) Lister() v1alpha2.StashTemplateLister {
-	return v1alpha2.NewStashTemplateLister(f.Informer().GetIndexer())
+func (f *procedureInformer) Lister() v1alpha2.ProcedureLister {
+	return v1alpha2.NewProcedureLister(f.Informer().GetIndexer())
 }

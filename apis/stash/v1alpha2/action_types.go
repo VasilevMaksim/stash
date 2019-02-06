@@ -24,7 +24,6 @@ type Action struct {
 
 type ActionSpec struct {
 	// A single container that perform a specific task.
-	// +optional
 	Container *core.Container `json:"container, omitempty"`
 }
 

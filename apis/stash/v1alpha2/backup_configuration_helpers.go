@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	crdutils "github.com/appscode/kutil/apiextensions/v1beta1"
-	"github.com/appscode/stash/apis"
 	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	hashutil "k8s.io/kubernetes/pkg/util/hash"
 )
@@ -35,15 +34,14 @@ func (bc BackupConfiguration) CustomResourceDefinition() *apiextensions.CustomRe
 		Labels: crdutils.Labels{
 			LabelsMap: map[string]string{"app": "stash"},
 		},
-		SpecDefinitionName:      "github.com/appscode/stash/apis/stash/v1alpha2.BackupConfiguration",
-		EnableValidation:        true,
-		GetOpenAPIDefinitions:   GetOpenAPIDefinitions,
-		EnableStatusSubresource: apis.EnableStatusSubresource,
+		SpecDefinitionName:    "github.com/appscode/stash/apis/stash/v1alpha2.BackupConfiguration",
+		EnableValidation:      true,
+		GetOpenAPIDefinitions: GetOpenAPIDefinitions,
 		AdditionalPrinterColumns: []apiextensions.CustomResourceColumnDefinition{
 			{
-				Name:     "Template",
+				Name:     "Procedure",
 				Type:     "string",
-				JSONPath: ".spec.stashTemplate",
+				JSONPath: ".spec.backupProcedure",
 			},
 			{
 				Name:     "Schedule",

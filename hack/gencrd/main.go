@@ -51,7 +51,7 @@ func generateCRDDefinitions() {
 		stashv1alpha2.DefaultBackupConfiguration{}.CustomResourceDefinition(),
 		stashv1alpha2.Recovery{}.CustomResourceDefinition(),
 		stashv1alpha2.Repository{}.CustomResourceDefinition(),
-		stashv1alpha2.StashTemplate{}.CustomResourceDefinition(),
+		stashv1alpha2.Procedure{}.CustomResourceDefinition(),
 	}
 	genCRD(stashv1alpha2.SchemeGroupVersion.Version, v1alpha2CRDs)
 
@@ -118,7 +118,7 @@ func generateSwaggerJson() {
 			{stashv1alpha2.SchemeGroupVersion, stashv1alpha2.ResourcePluralDefaultBackupConfiguration, stashv1alpha2.ResourceKindDefaultBackupConfiguration, false},
 			{stashv1alpha2.SchemeGroupVersion, stashv1alpha2.ResourcePluralRecovery, stashv1alpha2.ResourceKindRecovery, true},
 			{stashv1alpha2.SchemeGroupVersion, stashv1alpha2.ResourcePluralRepository, stashv1alpha2.ResourceKindRepository, true},
-			{stashv1alpha2.SchemeGroupVersion, stashv1alpha2.ResourcePluralStashTemplate, stashv1alpha2.ResourceKindStashTemplate, false},
+			{stashv1alpha2.SchemeGroupVersion, stashv1alpha2.ResourcePluralProcedure, stashv1alpha2.ResourceKindProcedure, false},
 		},
 		RDResources: []openapi.TypeInfo{
 			{repov1alpha1.SchemeGroupVersion, repov1alpha1.ResourcePluralSnapshot, repov1alpha1.ResourceKindSnapshot, true},

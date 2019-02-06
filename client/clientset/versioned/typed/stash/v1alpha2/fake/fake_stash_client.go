@@ -44,16 +44,16 @@ func (c *FakeStashV1alpha2) DefaultBackupConfigurations() v1alpha2.DefaultBackup
 	return &FakeDefaultBackupConfigurations{c}
 }
 
+func (c *FakeStashV1alpha2) Procedures() v1alpha2.ProcedureInterface {
+	return &FakeProcedures{c}
+}
+
 func (c *FakeStashV1alpha2) Recoveries(namespace string) v1alpha2.RecoveryInterface {
 	return &FakeRecoveries{c, namespace}
 }
 
 func (c *FakeStashV1alpha2) Repositories(namespace string) v1alpha2.RepositoryInterface {
 	return &FakeRepositories{c, namespace}
-}
-
-func (c *FakeStashV1alpha2) StashTemplates() v1alpha2.StashTemplateInterface {
-	return &FakeStashTemplates{c}
 }
 
 // RESTClient returns a RESTClient that is used to communicate

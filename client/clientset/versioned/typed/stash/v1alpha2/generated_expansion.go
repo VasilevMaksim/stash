@@ -26,8 +26,8 @@ type BackupInstanceExpansion interface{}
 
 type DefaultBackupConfigurationExpansion interface{}
 
+type ProcedureExpansion interface{}
+
 type RecoveryExpansion interface{}
 
 type RepositoryExpansion interface{}
-
-type StashTemplateExpansion interface{}

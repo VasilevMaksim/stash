@@ -2,12 +2,13 @@ package v1alpha2
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/kubernetes/pkg/apis/core"
 )
 
 const (
-	ResourceKindStashTemplate     = "StashTemplate"
-	ResourcePluralStashTemplate   = "stashtemplates"
-	ResourceSingularStashTemplate = "stashtemplate"
+	ResourceKindProcedure     = "Procedure"
+	ResourcePluralProcedure   = "procedures"
+	ResourceSingularProcedure = "procedure"
 )
 
 // +genclient
@@ -15,14 +16,17 @@ const (
 // +k8s:openapi-gen=true
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-type StashTemplate struct {
+type Procedure struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-	Spec              StashTemplateSpec `json:"spec,omitempty"`
+	Spec              ProcedureSpec `json:"spec,omitempty"`
 }
 
-type StashTemplateSpec struct {
+type ProcedureSpec struct {
 	Actions []Steps `json:"actions,omitempty"`
+	// List of volumes that can be mounted by containers belonging to the pod created for this procedure.
+	// +optional
+	Volumes []core.Volume `json:"volumes,omitempty"`
 }
 
 type Steps struct {
@@ -35,8 +39,8 @@ type Steps struct {
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-type StashTemplateList struct {
+type ProcedureList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []StashTemplate `json:"items,omitempty"`
+	Items           []Procedure `json:"items,omitempty"`
 }

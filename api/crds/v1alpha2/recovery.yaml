@@ -26,8 +26,9 @@ spec:
   group: stash.appscode.com
   names:
     categories:
-    - storage
+    - stash
     - appscode
+    - recovery
     kind: Recovery
     plural: recoveries
     shortNames:
@@ -2728,6 +2729,10 @@ spec:
               description: RecoveryPolicy specifies weather to recover only once or
                 recover always when workload restart for a particular Recovery crd.
               type: string
+            recoveryProcedure:
+              description: RecoveryProcedure specify the Procedure crd that specifies
+                the steps for recovery process
+              type: string
             repository:
               properties:
                 name:
@@ -2739,10 +2744,6 @@ spec:
               - namespace
             snapshot:
               description: Snapshot to recover. Default is latest snapshot.
-              type: string
-            stashTemplate:
-              description: StashTemplate specify the StashTemplate crd that will be
-                used for creating recovery job
               type: string
           required:
           - repository

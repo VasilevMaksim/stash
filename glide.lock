@@ -1,5 +1,5 @@
-hash: 3ff7c7ec4fa4c0584a2cb85748e0d408ff0e3ab1e0a013c1074f9787ceacde9f
-updated: 2018-12-26T04:17:38.797251954-08:00
+hash: 7dacf85f4dcf7780d3e75cfd038f22675dcf003bafeac9fad768155385b98184
+updated: 2019-02-06T15:50:48.167178701+06:00
 imports:
 - name: bitbucket.org/ww/goautoneg
   version: 75cd24fc2f2c2a2088577d12123ddee5f54e0675
@@ -8,7 +8,7 @@ imports:
   subpackages:
   - compute/metadata
 - name: github.com/appscode/go
-  version: 584aaa73af837f112c0a471be398ea837341c330
+  version: 52eaa8008e2e5fe8df77ac6fb2fd45e3ea2ae47c
   subpackages:
   - analytics
   - context
@@ -28,7 +28,7 @@ imports:
 - name: github.com/appscode/go-version
   version: 7aba545c679b0f45679eeb406dc662d2c8a04c26
 - name: github.com/appscode/jsonpatch
-  version: 5af499cf01c842bfdd7761a433fc90525ccd6836
+  version: 7c0e3b262f30165a8ec3d0b4c6059fd92703bfb2
 - name: github.com/appscode/kubernetes-webhook-util
   version: 904e96afd5093a20c8e1e247749221d9a5c9419b
   subpackages:
@@ -41,7 +41,7 @@ imports:
   - registry/admissionreview/v1beta1
   - runtime/serializer/versioning
 - name: github.com/appscode/kutil
-  version: d9fb2e606bf2c196a8cd8cff13097f531d686a44
+  version: cc179dba2da91f5d52530ead51ae63e2e6ccbfa2
   subpackages:
   - admissionregistration/v1beta1
   - apiextensions/v1beta1
@@ -59,6 +59,7 @@ imports:
   - tools/cli
   - tools/clientcmd
   - tools/queue
+  - tools/restic
 - name: github.com/appscode/mergo
   version: 9f23e2d6bd2a77f959b2bf6acdbefd708a83a4a4
 - name: github.com/appscode/osm
@@ -287,7 +288,7 @@ imports:
 - name: github.com/google/btree
   version: 7d79101e329e5a3adf994758c578dab82b90c017
 - name: github.com/google/go-cmp
-  version: 3af367b6b30c263d47e8895973edcca9a49cf029
+  version: 2248b49eaa8e1c8c0963ee77b40841adbc19d4ca
   subpackages:
   - cmp
   - cmp/internal/diff
@@ -363,7 +364,7 @@ imports:
 - name: github.com/modern-go/reflect2
   version: 05fbef0ca5da472bbf96c9322b84a53edc03c9fd
 - name: github.com/ncw/swift
-  version: 3d63426e3fec66c303577c2257565bd19a5ca3bc
+  version: ba19fe35e796969e50f19bd748a770ec5d191ece
 - name: github.com/NYTimes/gziphandler
   version: 56545f4a5d46df9a6648819d1664c3a03a13ffdb
 - name: github.com/onsi/ginkgo
@@ -409,9 +410,10 @@ imports:
 - name: github.com/pkg/errors
   version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/prometheus/client_golang
-  version: c5b7fccd204277076155f10851dad72b76a49317
+  version: 7190de1ef27a67a600698247a86db923cd5b8127
   subpackages:
   - prometheus
+  - prometheus/internal
   - prometheus/push
 - name: github.com/prometheus/client_model
   version: fa8ad6fec33561be4280a8f0514318c79d7f6cb6
@@ -686,7 +688,7 @@ imports:
   - third_party/forked/golang/netutil
   - third_party/forked/golang/reflect
 - name: k8s.io/apiserver
-  version: 419ab4faf457be27411fc8125ed110a03be373e8
+  version: 2aa1408a8c0a98b7d52911b63a98cbb7c9fd5e7c
   repo: https://github.com/kmodules/apiserver.git
   vcs: git
   subpackages:
@@ -1034,7 +1036,7 @@ imports:
   - api/v1
   - osm
 - name: kmodules.xyz/openshift
-  version: 1c734d4b9cb3d1d7841efe8aed6007e845b92bc8
+  version: 9c176a67ebd4b5f69d6420df59589380daba9f37
   repo: https://github.com/kmodules/openshift.git
   vcs: git
   subpackages:

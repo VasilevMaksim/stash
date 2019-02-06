@@ -31,9 +31,9 @@ type StashV1alpha2Interface interface {
 	BackupConfigurationsGetter
 	BackupInstancesGetter
 	DefaultBackupConfigurationsGetter
+	ProceduresGetter
 	RecoveriesGetter
 	RepositoriesGetter
-	StashTemplatesGetter
 }
 
 // StashV1alpha2Client is used to interact with features provided by the stash.appscode.com group.
@@ -57,16 +57,16 @@ func (c *StashV1alpha2Client) DefaultBackupConfigurations() DefaultBackupConfigu
 	return newDefaultBackupConfigurations(c)
 }
 
+func (c *StashV1alpha2Client) Procedures() ProcedureInterface {
+	return newProcedures(c)
+}
+
 func (c *StashV1alpha2Client) Recoveries(namespace string) RecoveryInterface {
 	return newRecoveries(c, namespace)
 }
 
 func (c *StashV1alpha2Client) Repositories(namespace string) RepositoryInterface {
 	return newRepositories(c, namespace)
-}
-
-func (c *StashV1alpha2Client) StashTemplates() StashTemplateInterface {
-	return newStashTemplates(c)
 }
 
 // NewForConfig creates a new StashV1alpha2Client for the given config.

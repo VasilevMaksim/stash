@@ -13,7 +13,7 @@ func (c Recovery) CustomResourceDefinition() *apiextensions.CustomResourceDefini
 		Singular:      ResourceSingularRecovery,
 		Kind:          ResourceKindRecovery,
 		ShortNames:    []string{"rec"},
-		Categories:    []string{"storage", "appscode"},
+		Categories:    []string{"stash", "appscode", "recovery"},
 		ResourceScope: string(apiextensions.NamespaceScoped),
 		Versions: []apiextensions.CustomResourceDefinitionVersion{
 			{

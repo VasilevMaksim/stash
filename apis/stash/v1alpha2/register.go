@@ -44,8 +44,8 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 		&RecoveryList{},
 		&Repository{},
 		&RepositoryList{},
-		&StashTemplate{},
-		&StashTemplateList{},
+		&Procedure{},
+		&ProcedureList{},
 	)
 
 	scheme.AddKnownTypes(SchemeGroupVersion,

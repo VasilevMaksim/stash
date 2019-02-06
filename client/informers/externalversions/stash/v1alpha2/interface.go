@@ -32,12 +32,12 @@ type Interface interface {
 	BackupInstances() BackupInstanceInformer
 	// DefaultBackupConfigurations returns a DefaultBackupConfigurationInformer.
 	DefaultBackupConfigurations() DefaultBackupConfigurationInformer
+	// Procedures returns a ProcedureInformer.
+	Procedures() ProcedureInformer
 	// Recoveries returns a RecoveryInformer.
 	Recoveries() RecoveryInformer
 	// Repositories returns a RepositoryInformer.
 	Repositories() RepositoryInformer
-	// StashTemplates returns a StashTemplateInformer.
-	StashTemplates() StashTemplateInformer
 }
 
 type version struct {
@@ -71,6 +71,11 @@ func (v *version) DefaultBackupConfigurations() DefaultBackupConfigurationInform
 	return &defaultBackupConfigurationInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
 }
 
+// Procedures returns a ProcedureInformer.
+func (v *version) Procedures() ProcedureInformer {
+	return &procedureInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
+}
+
 // Recoveries returns a RecoveryInformer.
 func (v *version) Recoveries() RecoveryInformer {
 	return &recoveryInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
@@ -79,9 +84,4 @@ func (v *version) Recoveries() RecoveryInformer {
 // Repositories returns a RepositoryInformer.
 func (v *version) Repositories() RepositoryInformer {
 	return &repositoryInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
-}
-
-// StashTemplates returns a StashTemplateInformer.
-func (v *version) StashTemplates() StashTemplateInformer {
-	return &stashTemplateInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
 }

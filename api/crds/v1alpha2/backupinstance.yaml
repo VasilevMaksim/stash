@@ -9,7 +9,7 @@ metadata:
 spec:
   additionalPrinterColumns:
   - JSONPath: .spec.targetBackupConfiguration
-    name: TargetBackupConfiguration
+    name: Target-Backup-Configuration
     type: string
   - JSONPath: .status.phase
     name: Phase
@@ -20,7 +20,7 @@ spec:
   group: stash.appscode.com
   names:
     categories:
-    - instance
+    - stash
     - backup
     - appscode
     kind: BackupInstance
@@ -338,30 +338,48 @@ spec:
               - format: int64
                 type: integer
             phase:
+              description: Phase indicates the phase of the backup process for this
+                BackupInstance
               type: string
             stats:
-              items:
-                properties:
-                  duration:
-                    type: string
-                  fileStats:
-                    properties:
-                      changed:
-                        format: int32
-                        type: integer
-                      new:
-                        format: int32
-                        type: integer
-                      unmodified:
-                        format: int32
-                        type: integer
-                  size:
-                    type: string
-                  snapshot:
-                    type: string
-                  uploaded:
-                    type: string
-              type: array
+              properties:
+                fileStats:
+                  properties:
+                    modifiedFiles:
+                      description: ModifiedFiles shows total number of files that
+                        has been modified since last backup
+                      format: int32
+                      type: integer
+                    newFiles:
+                      description: NewFiles shows total number of new files that has
+                        been created since last backup
+                      format: int32
+                      type: integer
+                    totalFiles:
+                      description: TotalFiles shows total number of files that has
+                        been backed up
+                      format: int32
+                      type: integer
+                    unmodifiedFiles:
+                      description: UnmodifiedFiles shows total number of files that
+                        has not been changed since last backup
+                      format: int32
+                      type: integer
+                processingTime:
+                  description: ProcessingTime indicates time taken to process the
+                    target data
+                  type: string
+                size:
+                  description: Size indicates the size of target data to backup
+                  type: string
+                snapshot:
+                  description: Snapshot indicates the name of the backup snapshot
+                    created in this backup session
+                  type: string
+                uploaded:
+                  description: Uploaded indicates size of data uploaded to backend
+                    in this backup session
+                  type: string
   version: v1alpha2
   versions:
   - name: v1alpha2

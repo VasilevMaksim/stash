@@ -14,7 +14,7 @@ spec:
   group: stash.appscode.com
   names:
     categories:
-    - template
+    - stash
     - appscode
     - kube-ci
     kind: Action
@@ -23,8 +23,6 @@ spec:
     - act
     singular: action
   scope: Cluster
-  subresources:
-    status: {}
   validation:
     openAPIV3Schema:
       properties:

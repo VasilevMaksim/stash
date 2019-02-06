@@ -13,7 +13,7 @@ func (c Repository) CustomResourceDefinition() *apiextensions.CustomResourceDefi
 		Singular:      ResourceSingularRepository,
 		Kind:          ResourceKindRepository,
 		ShortNames:    []string{"repo"},
-		Categories:    []string{"storage", "appscode", "all"},
+		Categories:    []string{"storage", "appscode", "stash"},
 		ResourceScope: string(apiextensions.NamespaceScoped),
 		Versions: []apiextensions.CustomResourceDefinitionVersion{
 			{
@@ -31,9 +31,19 @@ func (c Repository) CustomResourceDefinition() *apiextensions.CustomResourceDefi
 		EnableStatusSubresource: apis.EnableStatusSubresource,
 		AdditionalPrinterColumns: []apiextensions.CustomResourceColumnDefinition{
 			{
-				Name:     "Backup-Count",
+				Name:     "Integrity",
+				Type:     "boolean",
+				JSONPath: ".status.integrity",
+			},
+			{
+				Name:     "Size",
+				Type:     "string",
+				JSONPath: ".status.size",
+			},
+			{
+				Name:     "Snapshot-Count",
 				Type:     "integer",
-				JSONPath: ".status.backupCount",
+				JSONPath: ".status.snapshotCount",
 			},
 			{
 				Name:     "Last-Successful-Backup",

@@ -5,7 +5,7 @@ metadata:
   creationTimestamp: null
   labels:
     app: stash
-  name: stashtemplates.stash.appscode.com
+  name: procedures.stash.appscode.com
 spec:
   additionalPrinterColumns:
   - JSONPath: .metadata.creationTimestamp
@@ -14,18 +14,14 @@ spec:
   group: stash.appscode.com
   names:
     categories:
-    - template
-    - backup
     - stash
     - appscode
-    kind: StashTemplate
-    plural: stashtemplates
+    kind: Procedure
+    plural: procedures
     shortNames:
-    - stpl
-    singular: stashtemplate
+    - proc
+    singular: procedure
   scope: Cluster
-  subresources:
-    status: {}
   validation:
     openAPIV3Schema:
       properties:
@@ -328,6 +324,11 @@ spec:
                   name:
                     description: Name indicates the name of Action crd
                     type: string
+              type: array
+            volumes:
+              description: List of volumes that can be mounted by containers belonging
+                to the pod created for this procedure.
+              items: {}
               type: array
   version: v1alpha2
   versions:
