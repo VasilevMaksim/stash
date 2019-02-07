@@ -99,6 +99,7 @@ func (c *StashController) ensureCustomResourceDefinitions() error {
 		api.Recovery{}.CustomResourceDefinition(),
 		api.Repository{}.CustomResourceDefinition(),
 		api_v1alpha2.BackupConfiguration{}.CustomResourceDefinition(),
+		api_v1alpha2.BackupInstance{}.CustomResourceDefinition(),
 	}
 	return crdutils.RegisterCRDs(c.crdClient, crds)
 }

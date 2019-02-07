@@ -10,6 +10,7 @@ import (
 	"github.com/appscode/kutil/tools/queue"
 	api_v1alpha2 "github.com/appscode/stash/apis/stash/v1alpha2"
 	"github.com/appscode/stash/client/clientset/versioned/scheme"
+	"github.com/appscode/stash/pkg/docker"
 	"github.com/appscode/stash/pkg/eventer"
 	"github.com/appscode/stash/pkg/util"
 	"github.com/golang/glog"
@@ -108,7 +109,7 @@ func (c *StashController) runBackupConfigurationInjector(key string) error {
 				}
 
 			}
-			err := c.StartCronJob(backupconfiguration)
+			err := c.EnsureCronJob(backupconfiguration)
 			if err != nil {
 				return err
 			}
@@ -271,10 +272,23 @@ func (c *StashController) EnsureSidecar2(backupconfiguration *api_v1alpha2.Backu
 
 }
 
-func (c *StashController) StartCronJob(backupconfiguration *api_v1alpha2.BackupConfiguration) error {
+func (c *StashController) EnsureCronJob(backupconfiguration *api_v1alpha2.BackupConfiguration) error {
+	image := docker.Docker{
+		Registry: c.DockerRegistry,
+		Image:    docker.ImageStash,
+		Tag:      c.StashImageTag,
+	}
+
 	meta := metav1.ObjectMeta{
 		Name:      backupconfiguration.Name,
 		Namespace: backupconfiguration.Namespace,
+	}
+
+	if c.EnableRBAC {
+		fmt.Println(".............. rbac here.....................")
+		if err := c.ensureCronJobRoleBinding(backupconfiguration.Name, backupconfiguration.Namespace); err != nil {
+			return fmt.Errorf("error ensuring rbac for kubectl cron job %s, reason: %s", meta.Name, err)
+		}
 	}
 
 	_, _, err := batch_util.CreateOrPatchCronJob(c.kubeClient, meta, func(in *v1beta1.CronJob) *v1beta1.CronJob {
@@ -287,17 +301,30 @@ func (c *StashController) StartCronJob(backupconfiguration *api_v1alpha2.BackupC
 			in.Spec.JobTemplate.Spec.Template.Spec.Containers,
 			core.Container{
 				Name:  backupconfiguration.Name,
-				Image: "busybox",
+				Image: image.ToContainerImage(),
+				Args: []string{
+					"backup_instance",
+					fmt.Sprintf("--backupInstanceName=%s", backupconfiguration.Name),
+				},
 			})
 
 		in.Spec.JobTemplate.Spec.Template.Spec.RestartPolicy = core.RestartPolicyNever
-
+		in.Spec.JobTemplate.Spec.Template.Spec.ServiceAccountName = in.Name
 		return in
 
 	})
 	if err != nil {
 		return err
 	}
+	//if c.EnableRBAC {
+	//	ref, err := reference.GetReference(scheme.Scheme, cronjob)
+	//	if err != nil {
+	//		return err
+	//	}
+	//	if err = c.ensureCronJobRoleBinding(ref); err != nil {
+	//		return fmt.Errorf("error ensuring rbac for kubectl cron job %s, reason: %s", meta.Name, err)
+	//	}
+	//}
 	return nil
 }
 
