@@ -9,6 +9,7 @@ import (
 	meta_util "github.com/appscode/kutil/meta"
 	rbac_util "github.com/appscode/kutil/rbac/v1"
 	api "github.com/appscode/stash/apis/stash/v1alpha1"
+	api_v1alpha2 "github.com/appscode/stash/apis/stash/v1alpha1"
 	"github.com/appscode/stash/client/clientset/versioned/scheme"
 	"github.com/appscode/stash/pkg/util"
 	"github.com/golang/glog"
@@ -23,6 +24,7 @@ import (
 const (
 	SidecarClusterRole = "stash-sidecar"
 	ScaledownJobRole   = "stash-scaledownjob"
+	CronJobClusterRole = "stash-ensure-cronjob"
 )
 
 func (c *StashController) getSidecarRoleBindingName(name string) string {
@@ -48,7 +50,7 @@ func (c *StashController) ensureSidecarRoleBinding(resource *core.ObjectReferenc
 		}
 		in.Subjects = []rbac.Subject{
 			{
-				Kind:      "ServiceAccount",
+				Kind:      rbac.ServiceAccountKind,
 				Name:      sa,
 				Namespace: resource.Namespace,
 			},
@@ -63,6 +65,68 @@ func (c *StashController) ensureSidecarRoleBindingDeleted(resource metav1.Object
 	return c.kubeClient.RbacV1().
 		RoleBindings(resource.Namespace).
 		Delete(c.getSidecarRoleBindingName(resource.Name), &metav1.DeleteOptions{})
+}
+
+func (c *StashController) ensureCronJobClusterRole() error {
+	meta := metav1.ObjectMeta{Name: CronJobClusterRole}
+	_, _, err := rbac_util.CreateOrPatchClusterRole(c.kubeClient, meta, func(in *rbac.ClusterRole) *rbac.ClusterRole {
+		if in.Labels == nil {
+			in.Labels = map[string]string{}
+		}
+		in.Labels["app"] = "stash"
+		in.Rules = []rbac.PolicyRule{
+			{
+				APIGroups: []string{api_v1alpha2.SchemeGroupVersion.Group},
+				Resources: []string{"backupinstances"},
+				Verbs:     []string{"create", "get", "patch", "list"},
+			},
+		}
+		return in
+
+	})
+	return err
+}
+func (c *StashController) ensureCronJobRoleBinding(name, namespace string) error {
+	meta := metav1.ObjectMeta{
+		Name:      name,
+		Namespace: namespace,
+	}
+
+	//ensure service account
+	_, _, err := core_util.CreateOrPatchServiceAccount(c.kubeClient, meta, func(in *core.ServiceAccount) *core.ServiceAccount {
+		if in.Labels == nil {
+			in.Labels = map[string]string{}
+		}
+		in.Labels["app"] = "stash"
+		return in
+	})
+
+	fmt.Println("hello....................")
+
+	// ensure role binding
+	_, _, err = rbac_util.CreateOrPatchRoleBinding(c.kubeClient, meta, func(in *rbac.RoleBinding) *rbac.RoleBinding {
+
+		if in.Labels == nil {
+			in.Labels = map[string]string{}
+		}
+		in.Labels["app"] = "stash"
+
+		in.RoleRef = rbac.RoleRef{
+			APIGroup: rbac.GroupName,
+			Kind:     "ClusterRole",
+			Name:     CronJobClusterRole,
+		}
+		in.Subjects = []rbac.Subject{
+			{
+				Kind: rbac.ServiceAccountKind,
+				Name: meta.Name,
+				//APIGroup: rbac.GroupName,
+			},
+		}
+		return in
+	})
+
+	return err
 }
 
 func (c *StashController) ensureSidecarClusterRole() error {

@@ -124,6 +124,7 @@ if [ "$STASH_E2E_TEST" = false ]; then # don't run operator while run this scrip
     --authentication-kubeconfig="$HOME/.kube/config" \
     --authentication-skip-lookup \
     --docker-registry="$STASH_DOCKER_REGISTRY" \
-    --image-tag="$STASH_IMAGE_TAG"
+    --image-tag="$STASH_IMAGE_TAG" \
+    --rbac=true
 fi
 popd

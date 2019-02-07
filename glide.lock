@@ -1,5 +1,5 @@
 hash: efa620fd25edc4f945b81e817d76e02a29aac2c57a4670ccb0b603894a7a474b
-updated: 2019-02-04T12:46:22.943322047+06:00
+updated: 2019-02-06T16:23:21.559722827+06:00
 imports:
 - name: bitbucket.org/ww/goautoneg
   version: 75cd24fc2f2c2a2088577d12123ddee5f54e0675
@@ -452,6 +452,8 @@ imports:
   - doc
 - name: github.com/spf13/pflag
   version: 298182f68c66c05229eb03ac171abe6e309ee79a
+- name: github.com/tamalsaha/go-oneliners
+  version: 6d24eabef827a097ee2533df048d668700bf273e
 - name: github.com/ugorji/go
   version: ded73eae5db7e7a0ef6f55aace87a2873c5d2b74
   subpackages:
@@ -1032,9 +1034,6 @@ imports:
   version: b4ef1fe08b7a09681a676c1b697cf66fd74b7ed4
   repo: https://github.com/kmodules/custom-resources.git
   vcs: git
-  subpackages:
-  - apis/appcatalog
-  - apis/appcatalog/v1alpha1
 - name: kmodules.xyz/objectstore-api
   version: ebe27c957a5bf41e0680776e3626b5507087f4c3
   repo: https://github.com/kmodules/objectstore-api.git
