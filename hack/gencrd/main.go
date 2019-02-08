@@ -15,7 +15,7 @@ import (
 	repov1alpha1 "github.com/appscode/stash/apis/repositories/v1alpha1"
 	stashinstall "github.com/appscode/stash/apis/stash/install"
 	stashv1alpha1 "github.com/appscode/stash/apis/stash/v1alpha1"
-	stashv1alpha2 "github.com/appscode/stash/apis/stash/v1alpha2"
+	stashv1beta1 "github.com/appscode/stash/apis/stash/v1beta1"
 	"github.com/go-openapi/spec"
 	"github.com/golang/glog"
 	crd_api "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
@@ -43,17 +43,17 @@ func generateCRDDefinitions() {
 	}
 	genCRD(stashv1alpha1.SchemeGroupVersion.Version, v1alpha1CRDs)
 
-	// generate "v1alpha2" crds
-	v1alpha2CRDs := []*crd_api.CustomResourceDefinition{
-		stashv1alpha2.Action{}.CustomResourceDefinition(),
-		stashv1alpha2.BackupConfiguration{}.CustomResourceDefinition(),
-		stashv1alpha2.BackupInstance{}.CustomResourceDefinition(),
-		stashv1alpha2.DefaultBackupConfiguration{}.CustomResourceDefinition(),
-		stashv1alpha2.Recovery{}.CustomResourceDefinition(),
-		stashv1alpha2.Repository{}.CustomResourceDefinition(),
-		stashv1alpha2.Procedure{}.CustomResourceDefinition(),
+	// generate "v1beta1" crds
+	v1beta1CRDs := []*crd_api.CustomResourceDefinition{
+		stashv1beta1.Function{}.CustomResourceDefinition(),
+		stashv1beta1.BackupConfiguration{}.CustomResourceDefinition(),
+		stashv1beta1.BackupSession{}.CustomResourceDefinition(),
+		stashv1beta1.BackupTemplate{}.CustomResourceDefinition(),
+		stashv1beta1.RecoveryConfiguration{}.CustomResourceDefinition(),
+		stashv1beta1.Repository{}.CustomResourceDefinition(),
+		stashv1beta1.Task{}.CustomResourceDefinition(),
 	}
-	genCRD(stashv1alpha2.SchemeGroupVersion.Version, v1alpha2CRDs)
+	genCRD(stashv1beta1.SchemeGroupVersion.Version, v1beta1CRDs)
 
 }
 
@@ -102,7 +102,7 @@ func generateSwaggerJson() {
 		},
 		OpenAPIDefinitions: []common.GetOpenAPIDefinitions{
 			stashv1alpha1.GetOpenAPIDefinitions,
-			stashv1alpha2.GetOpenAPIDefinitions,
+			stashv1beta1.GetOpenAPIDefinitions,
 			repov1alpha1.GetOpenAPIDefinitions,
 		},
 		Resources: []openapi.TypeInfo{
@@ -111,14 +111,14 @@ func generateSwaggerJson() {
 			{stashv1alpha1.SchemeGroupVersion, stashv1alpha1.ResourcePluralRepository, stashv1alpha1.ResourceKindRepository, true},
 			{stashv1alpha1.SchemeGroupVersion, stashv1alpha1.ResourcePluralRecovery, stashv1alpha1.ResourceKindRecovery, true},
 
-			// v1alpha2 resources
-			{stashv1alpha2.SchemeGroupVersion, stashv1alpha2.ResourcePluralAction, stashv1alpha2.ResourceKindAction, false},
-			{stashv1alpha2.SchemeGroupVersion, stashv1alpha2.ResourcePluralBackupConfiguration, stashv1alpha2.ResourceKindBackupConfiguration, true},
-			{stashv1alpha2.SchemeGroupVersion, stashv1alpha2.ResourcePluralBackupInstance, stashv1alpha2.ResourceKindBackupInstance, true},
-			{stashv1alpha2.SchemeGroupVersion, stashv1alpha2.ResourcePluralDefaultBackupConfiguration, stashv1alpha2.ResourceKindDefaultBackupConfiguration, false},
-			{stashv1alpha2.SchemeGroupVersion, stashv1alpha2.ResourcePluralRecovery, stashv1alpha2.ResourceKindRecovery, true},
-			{stashv1alpha2.SchemeGroupVersion, stashv1alpha2.ResourcePluralRepository, stashv1alpha2.ResourceKindRepository, true},
-			{stashv1alpha2.SchemeGroupVersion, stashv1alpha2.ResourcePluralProcedure, stashv1alpha2.ResourceKindProcedure, false},
+			// v1beta1 resources
+			{stashv1beta1.SchemeGroupVersion, stashv1beta1.ResourcePluralBackupConfiguration, stashv1beta1.ResourceKindBackupConfiguration, true},
+			{stashv1beta1.SchemeGroupVersion, stashv1beta1.ResourceKindBackupSession, stashv1beta1.ResourceKindBackupSession, true},
+			{stashv1beta1.SchemeGroupVersion, stashv1beta1.ResourceKindBackupTemplate, stashv1beta1.ResourceKindBackupTemplate, false},
+			{stashv1beta1.SchemeGroupVersion, stashv1beta1.ResourcePluralRecoveryConfiguration, stashv1beta1.ResourceKindRecoveryConfiguration, true},
+			{stashv1beta1.SchemeGroupVersion, stashv1beta1.ResourcePluralRepository, stashv1beta1.ResourceKindRepository, true},
+			{stashv1beta1.SchemeGroupVersion, stashv1beta1.ResourceKindFunction, stashv1beta1.ResourceKindFunction, false},
+			{stashv1beta1.SchemeGroupVersion, stashv1beta1.ResourcePluralTask, stashv1beta1.ResourceKindTask, false},
 		},
 		RDResources: []openapi.TypeInfo{
 			{repov1alpha1.SchemeGroupVersion, repov1alpha1.ResourcePluralSnapshot, repov1alpha1.ResourceKindSnapshot, true},

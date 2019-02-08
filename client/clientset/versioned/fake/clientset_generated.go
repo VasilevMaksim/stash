@@ -24,8 +24,8 @@ import (
 	fakerepositoriesv1alpha1 "github.com/appscode/stash/client/clientset/versioned/typed/repositories/v1alpha1/fake"
 	stashv1alpha1 "github.com/appscode/stash/client/clientset/versioned/typed/stash/v1alpha1"
 	fakestashv1alpha1 "github.com/appscode/stash/client/clientset/versioned/typed/stash/v1alpha1/fake"
-	stashv1alpha2 "github.com/appscode/stash/client/clientset/versioned/typed/stash/v1alpha2"
-	fakestashv1alpha2 "github.com/appscode/stash/client/clientset/versioned/typed/stash/v1alpha2/fake"
+	stashv1beta1 "github.com/appscode/stash/client/clientset/versioned/typed/stash/v1beta1"
+	fakestashv1beta1 "github.com/appscode/stash/client/clientset/versioned/typed/stash/v1beta1/fake"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/discovery"
@@ -90,12 +90,12 @@ func (c *Clientset) StashV1alpha1() stashv1alpha1.StashV1alpha1Interface {
 	return &fakestashv1alpha1.FakeStashV1alpha1{Fake: &c.Fake}
 }
 
-// Stash retrieves the StashV1alpha1Client
-func (c *Clientset) Stash() stashv1alpha1.StashV1alpha1Interface {
-	return &fakestashv1alpha1.FakeStashV1alpha1{Fake: &c.Fake}
+// StashV1beta1 retrieves the StashV1beta1Client
+func (c *Clientset) StashV1beta1() stashv1beta1.StashV1beta1Interface {
+	return &fakestashv1beta1.FakeStashV1beta1{Fake: &c.Fake}
 }
 
-// StashV1alpha2 retrieves the StashV1alpha2Client
-func (c *Clientset) StashV1alpha2() stashv1alpha2.StashV1alpha2Interface {
-	return &fakestashv1alpha2.FakeStashV1alpha2{Fake: &c.Fake}
+// Stash retrieves the StashV1beta1Client
+func (c *Clientset) Stash() stashv1beta1.StashV1beta1Interface {
+	return &fakestashv1beta1.FakeStashV1beta1{Fake: &c.Fake}
 }

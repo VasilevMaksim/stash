@@ -209,7 +209,7 @@ User will be able to recover backed up data  into a  volume.
 Sample `Recovery` crd to recover into a volume:
 
 ```yaml
-apiVersion: stash.appscode.com/v1alpha2
+apiVersion: v1beta1
 kind: Recovery
 metadata:
   name: recovery-volume-demo
@@ -767,7 +767,7 @@ spec:
 
 ```yaml
 # stashUpdateRepo update Repository and BackupInstance status for respective backup
-apiVersion: stash.appscode.com/v1alpha2
+apiVersion: v1beta1
 kind: Action
 metadata:
   name: stashUpdateRepo

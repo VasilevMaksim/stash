@@ -7,7 +7,7 @@ PACKAGE_NAME=github.com/appscode/stash
 REPO_ROOT="$GOPATH/src/$PACKAGE_NAME"
 DOCKER_REPO_ROOT="/go/src/$PACKAGE_NAME"
 DOCKER_CODEGEN_PKG="/go/src/k8s.io/code-generator"
-apiGroups=(repositories/v1alpha1 stash/v1alpha1 stash/v1alpha2)
+apiGroups=(repositories/v1alpha1 stash/v1alpha1 stash/v1beta1)
 
 pushd $REPO_ROOT
 
@@ -31,7 +31,7 @@ docker run --rm -ti -u $(id -u):$(id -g) \
   appscode/gengo:release-1.12 "$DOCKER_CODEGEN_PKG"/generate-groups.sh all \
   github.com/appscode/stash/client \
   github.com/appscode/stash/apis \
-  "repositories:v1alpha1 stash:v1alpha1 stash:v1alpha2" \
+  "repositories:v1alpha1 stash:v1alpha1 stash:v1beta1" \
   --go-header-file "$DOCKER_REPO_ROOT/hack/gengo/boilerplate.go.txt"
 
 # Generate openapi
