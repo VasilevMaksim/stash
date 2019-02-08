@@ -1,8 +1,6 @@
 package cmds
 
 import (
-	"fmt"
-
 	"github.com/appscode/go/log"
 	"github.com/appscode/kutil/meta"
 	cs "github.com/appscode/stash/client/clientset/versioned"
@@ -27,7 +25,6 @@ func NewBackupInstance() *cobra.Command {
 		Short:             "backupInastance CRD Create",
 		DisableAutoGenTag: true,
 		Run: func(cmd *cobra.Command, args []string) {
-			//fmt.Println("=======================>")
 			config, err := clientcmd.BuildConfigFromFlags(masterURL, kubeconfigPath)
 			if err != nil {
 				log.Fatalf("Could not get Kubernetes config: %s", err)
@@ -36,13 +33,10 @@ func NewBackupInstance() *cobra.Command {
 			stashClient := cs.NewForConfigOrDie(config)
 
 			ctrl := backup_instance.New(kubeClient, stashClient, opt)
-
-			fmt.Println("=======================>05hello")
 			err = ctrl.CreateBackupInstanceCrd()
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Println("=======================>06hello")
 
 		},
 	}

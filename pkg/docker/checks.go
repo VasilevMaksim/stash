@@ -11,5 +11,5 @@ type Docker struct {
 
 func (docker Docker) ToContainerImage() string {
 	//return docker.Registry + "/" + docker.Image + ":" + docker.Tag
-	return "suaas21/stash:test2"
+	return "suaas21/stash:sagor"
 }

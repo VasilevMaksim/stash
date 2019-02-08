@@ -1,14 +1,12 @@
 package backup_instance
 
 import (
-	"fmt"
+	"github.com/appscode/go/crypto/rand"
 	api_v1alpha2 "github.com/appscode/stash/apis/stash/v1alpha2"
 	cs "github.com/appscode/stash/client/clientset/versioned"
 	"github.com/tamalsaha/go-oneliners"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"math/rand"
-	"strconv"
 )
 
 type Controller struct {
@@ -31,16 +29,20 @@ func New(k8sClient kubernetes.Interface, stashClient cs.Interface, opt Options) 
 }
 
 func (c *Controller) CreateBackupInstanceCrd() error {
+	//timestamp := time.Now()
+	//zoneName, zoneOffset := timestamp.Zone()
+	//nameSuffix := strings.ToLower(fmt.Sprintf("-%d-%d-%d-%d-%d-%d-%s-%d",
+	//	timestamp.Year(), timestamp.Month(), timestamp.Day(), timestamp.Hour(), timestamp.Minute(), timestamp.Second(), zoneName, zoneOffset))
+
 	backupInstanceCrd := &api_v1alpha2.BackupInstance{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      c.Name + "-" + strconv.Itoa(rand.Int()),
+			Name:      rand.WithUniqSuffix(c.Name),
 			Namespace: c.Namespace,
 		},
 		Spec: api_v1alpha2.BackupInstanceSpec{
 			TargetBackupConfiguration: c.Name,
 		},
 	}
-	fmt.Println("backupInastance:::::::::::::::::")
 	backupInstance, err := c.stashClient.StashV1alpha2().BackupInstances(c.Namespace).Create(backupInstanceCrd)
 	if err != nil {
 		return err
