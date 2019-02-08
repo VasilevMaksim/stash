@@ -24,7 +24,7 @@ import (
 const (
 	SidecarClusterRole = "stash-sidecar"
 	ScaledownJobRole   = "stash-scaledownjob"
-	CronJobClusterRole = "stash-ensure-cronjob"
+	CronJobRole        = "stash-cronjob"
 )
 
 func (c *StashController) getSidecarRoleBindingName(name string) string {
@@ -67,9 +67,24 @@ func (c *StashController) ensureSidecarRoleBindingDeleted(resource metav1.Object
 		Delete(c.getSidecarRoleBindingName(resource.Name), &metav1.DeleteOptions{})
 }
 
-func (c *StashController) ensureCronJobClusterRole() error {
-	meta := metav1.ObjectMeta{Name: CronJobClusterRole}
-	_, _, err := rbac_util.CreateOrPatchClusterRole(c.kubeClient, meta, func(in *rbac.ClusterRole) *rbac.ClusterRole {
+func (c *StashController) ensureCronJobRBAC(resource *core.ObjectReference) error {
+	if err := c.ensureCronJobRole(resource); err != nil {
+		return err
+
+	}
+	if err := c.ensureCronJobRoleBinding(resource); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *StashController) ensureCronJobRole(resource *core.ObjectReference) error {
+	meta := metav1.ObjectMeta{
+		Name:      CronJobRole,
+		Namespace: resource.Namespace,
+	}
+	_, _, err := rbac_util.CreateOrPatchRole(c.kubeClient, meta, func(in *rbac.Role) *rbac.Role {
+		core_util.EnsureOwnerReference(&in.ObjectMeta, resource)
 		if in.Labels == nil {
 			in.Labels = map[string]string{}
 		}
@@ -78,18 +93,18 @@ func (c *StashController) ensureCronJobClusterRole() error {
 			{
 				APIGroups: []string{api_v1alpha2.SchemeGroupVersion.Group},
 				Resources: []string{"backupinstances"},
-				Verbs:     []string{"create", "get", "patch", "list"},
+				Verbs:     []string{"create", "patch", "get", "list"},
 			},
 		}
 		return in
-
 	})
 	return err
 }
-func (c *StashController) ensureCronJobRoleBinding(name, namespace string) error {
+
+func (c *StashController) ensureCronJobRoleBinding(resource *core.ObjectReference) error {
 	meta := metav1.ObjectMeta{
-		Name:      name,
-		Namespace: namespace,
+		Name:      resource.Name,
+		Namespace: resource.Namespace,
 	}
 
 	//ensure service account
@@ -101,8 +116,6 @@ func (c *StashController) ensureCronJobRoleBinding(name, namespace string) error
 		return in
 	})
 
-	fmt.Println("hello....................")
-
 	// ensure role binding
 	_, _, err = rbac_util.CreateOrPatchRoleBinding(c.kubeClient, meta, func(in *rbac.RoleBinding) *rbac.RoleBinding {
 
@@ -113,14 +126,14 @@ func (c *StashController) ensureCronJobRoleBinding(name, namespace string) error
 
 		in.RoleRef = rbac.RoleRef{
 			APIGroup: rbac.GroupName,
-			Kind:     "ClusterRole",
-			Name:     CronJobClusterRole,
+			Kind:     "Role",
+			Name:     CronJobRole,
 		}
 		in.Subjects = []rbac.Subject{
 			{
-				Kind: rbac.ServiceAccountKind,
-				Name: meta.Name,
-				//APIGroup: rbac.GroupName,
+				Kind:      rbac.ServiceAccountKind,
+				Name:      meta.Name,
+				Namespace: meta.Namespace,
 			},
 		}
 		return in

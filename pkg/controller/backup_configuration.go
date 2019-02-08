@@ -285,29 +285,41 @@ func (c *StashController) EnsureCronJob(backupconfiguration *api_v1alpha2.Backup
 	}
 
 	if c.EnableRBAC {
-		fmt.Println(".............. rbac here.....................")
-		if err := c.ensureCronJobRoleBinding(backupconfiguration.Name, backupconfiguration.Namespace); err != nil {
+		ref, err := reference.GetReference(scheme.Scheme, backupconfiguration)
+		if err != nil {
+			return err
+		}
+		if err := c.ensureCronJobRBAC(ref); err != nil {
 			return fmt.Errorf("error ensuring rbac for kubectl cron job %s, reason: %s", meta.Name, err)
 		}
 	}
 
 	_, _, err := batch_util.CreateOrPatchCronJob(c.kubeClient, meta, func(in *v1beta1.CronJob) *v1beta1.CronJob {
-		//Spec
+		// set backup-configuration as cron-job owner
+		in.OwnerReferences = []metav1.OwnerReference{
+			{
+				APIVersion: api_v1alpha2.SchemeGroupVersion.String(),
+				Kind:       api_v1alpha2.ResourceKindBackupConfiguration,
+				Name:       backupconfiguration.Name,
+				UID:        backupconfiguration.UID,
+			},
+		}
 		in.Spec.Schedule = backupconfiguration.Spec.Schedule
 		if in.Spec.JobTemplate.Labels == nil {
 			in.Spec.JobTemplate.Labels = map[string]string{}
 		}
+		in.Spec.JobTemplate.Labels["app"] = util.AppLabelStash
 		in.Spec.JobTemplate.Spec.Template.Spec.Containers = core_util.UpsertContainer(
 			in.Spec.JobTemplate.Spec.Template.Spec.Containers,
 			core.Container{
-				Name:  backupconfiguration.Name,
-				Image: image.ToContainerImage(),
+				Name:            backupconfiguration.Name,
+				ImagePullPolicy: "Always",
+				Image:           image.ToContainerImage(),
 				Args: []string{
 					"backup_instance",
 					fmt.Sprintf("--backupInstanceName=%s", backupconfiguration.Name),
 				},
 			})
-
 		in.Spec.JobTemplate.Spec.Template.Spec.RestartPolicy = core.RestartPolicyNever
 		in.Spec.JobTemplate.Spec.Template.Spec.ServiceAccountName = in.Name
 		return in
@@ -316,15 +328,7 @@ func (c *StashController) EnsureCronJob(backupconfiguration *api_v1alpha2.Backup
 	if err != nil {
 		return err
 	}
-	//if c.EnableRBAC {
-	//	ref, err := reference.GetReference(scheme.Scheme, cronjob)
-	//	if err != nil {
-	//		return err
-	//	}
-	//	if err = c.ensureCronJobRoleBinding(ref); err != nil {
-	//		return fmt.Errorf("error ensuring rbac for kubectl cron job %s, reason: %s", meta.Name, err)
-	//	}
-	//}
+
 	return nil
 }
 

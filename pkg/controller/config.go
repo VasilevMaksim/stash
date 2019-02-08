@@ -89,13 +89,6 @@ func (c *Config) New() (*StashController, error) {
 			return nil, err
 		}
 	}
-	if ctrl.EnableRBAC {
-		if err := ctrl.ensureCronJobClusterRole(); err != nil {
-			return nil, err
-		}
-
-	}
-
 	ctrl.initNamespaceWatcher()
 	ctrl.initResticWatcher()
 	ctrl.initRecoveryWatcher()
