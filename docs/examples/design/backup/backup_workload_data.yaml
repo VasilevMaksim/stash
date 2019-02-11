@@ -1,4 +1,4 @@
-apiVersion: stash.appscode.com/v1alpha2
+apiVersion: stash.appscode.com/v1beta1
 kind: BackupConfiguration
 metadata:
   name: workload-data-backup
@@ -11,13 +11,13 @@ spec:
     name: stash-backup-repo
   # target indicate the target workload that we want to backup
   target:
-    workload:
+    ref:
       apiVersion: apps/v1
       kind: Deployment
       name: stash-demo
-  # targetDirectories indicates the directories inside the workload we want to backup
-  targetDirectories:
-  - /source/data
+    # directories indicates the directories inside the workload we want to backup
+    directories:
+    - /source/data
   # retentionPolicies specify the policy to follow to clean old backup snapshots
   retentionPolicy:
     keepLast: 5

@@ -1,8 +1,0 @@
-apiVersion: stash.appscode.com/v1alpha2
-kind: BackupInstance
-metadata:
-  name: volume-backup-demo-instance
-  namespace: demo
-spec:
-  # targetBackupConfiguration indicates the BackupConfiguration crd of respective target that we want to backup
-  targetBackupConfiguration: volume-backup-demo

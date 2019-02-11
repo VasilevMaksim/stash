@@ -1,12 +1,13 @@
-apiVersion: stash.appscode.com/v1alpha2
+apiVersion: stash.appscode.com/v1beta1
 kind: BackupConfiguration
 metadata:
   name: cluster-backup-demo
   namespace: demo
 spec:
   schedule: '@every 1h'
-  # backupProcedure indicates Procedure crd that specifies the steps of backup cluster yamls
-  backupProcedure: clusterBackup
+  # task indicates Task crd that specifies the steps of backup cluster yamls
+  task:
+    name: clusterBackup
   # repository refers to the Repository crd that hold backend information
   repository:
     name: stash-backup-repo
@@ -15,7 +16,3 @@ spec:
   retentionPolicy:
     keepLast: 5
     prune: true
-  # podAttributes is an optional field that can be used to set some attributes such as nodeSelector, affinity, toleration etc. for the backup job
-  podAttributes:
-    # ServiceAccount `stash-cluster-backup` must have read permission of all resources of the cluster
-    serviceAccountName: stash-cluster-backup

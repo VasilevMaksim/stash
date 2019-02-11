@@ -1,15 +1,15 @@
-# clusterBackup action backup yamls of all resources of the cluster
-apiVersion: stash.appscode.com/v1alpha2
-kind: Action
+# pgBackup function backup a PostgreSQL database
+apiVersion: stash.appscode.com/v1beta1
+kind: Function
 metadata:
-  name: clusterBackup
+  name: pgBackup
 spec:
   container:
-    image:  appscodeci/cluster-tool:v1
-    name:  cluster-tool
+    image:  appscodeci/postgresql-tool:v1
+    name:  postgres-tool
     args:
     - backup
-    - --sanitize=${sanitize}
+    - --database=${databases}
     - --provider=${provider}
     - --hostname=${hostname}
     - --path=${repoDir}
@@ -19,6 +19,19 @@ spec:
     - --metrics.enabled=${enableMetric}
     - --metrics.pushgateway-url=${pushgatewayURL}
     - --metrics.labels="workload-kind=${workloadKind},workload-name=${workloadName}"
+    env:
+    - name:  PGPASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: $(databaseSecret)
+          key: "POSTGRES_PASSWORD"
+    - name:  DB_USER
+      valueFrom:
+        secretKeyRef:
+          name: $(databaseSecret)
+          key: "POSTGRES_USER"
+    - name:  DB_HOST
+      value: $(host)
     volumeMounts:
     - name: ${tempVolumeName}
       mountPath: /tmp/restic

@@ -5,10 +5,10 @@ metadata:
   namespace: demo
   labels:
     app: stash-demo
-  # if stash find bellow annotations, it will take backup of it.
+  # This annotations indicates that data shoul be recovered on each restart of the workload
   annotations:
-    stash.appscode.com/defaultbackupconfiguration: "workload-data-default-backup-configuration"
-    stash.appscode.com/targetDirectories: "[/source/data]"
+    stash.appscode.com/recoveryconfiguration: "my-recovery-config"
+    stash.appscode.com/recoverypolicy: "OnRestart"
 spec:
   replicas: 1
   selector:

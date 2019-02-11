@@ -1,13 +1,13 @@
-# clusterBackup specifies required actions and their inputs to backup cluster yaml
-apiVersion: stash.appscode.com/v1alpha2
-kind: Procedure
+# pgBackup specifies required functions and their inputs to backup PostgreSQL database
+apiVersion: stash.appscode.com/v1beta1
+kind: Task
 metadata:
-  name: clusterBackup
+  name: pgBackup
 spec:
-  actions:
-  - name: clusterBackup
+  functions:
+  - name: pgBackup
     inputs:
-      sanitize: ${sanitize}
+      database: ${databases}
       provider: ${provider}
       hostname: ${hostname}
       repoDir: ${prefix}
@@ -23,6 +23,6 @@ spec:
   - name: stashPostBackup
     inputs:
       repoName: ${repoName}
-      backupInstanceName: ${backupInstanceName}
+      backupSession: ${backupSessionName}
       outputJsonDir: ${output-dir}
       outputVolumeName: ${output-volume-name}

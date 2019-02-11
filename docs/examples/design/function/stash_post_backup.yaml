@@ -1,6 +1,6 @@
-# stashUpdateRepo update Repository and BackupInstance status for respective backup
-apiVersion: stash.appscode.com/v1alpha2
-kind: Action
+# stashPostBackup update Repository and BackupSession status for respective backup
+apiVersion: stash.appscode.com/v1beta1
+kind: Function
 metadata:
   name: stashPostBackup
 spec:
@@ -10,7 +10,7 @@ spec:
     args:
     - post-backup-update
     - --repository=${repoName}
-    - --backup-instance=${backupInstanceName}
+    - --backupsession=${backupSessionName}
     - --output-json-dir=${outputJsonDir}
     volumeMounts:
     - name: ${outputVolumeName}
