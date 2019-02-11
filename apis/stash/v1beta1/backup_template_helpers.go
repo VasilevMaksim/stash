@@ -9,13 +9,13 @@ import (
 	hashutil "k8s.io/kubernetes/pkg/util/hash"
 )
 
-func (dbc BackupTemplate) GetSpecHash() string {
+func (btpl BackupTemplate) GetSpecHash() string {
 	hash := fnv.New64a()
-	hashutil.DeepHashObject(hash, dbc.Spec)
+	hashutil.DeepHashObject(hash, btpl.Spec)
 	return strconv.FormatUint(hash.Sum64(), 10)
 }
 
-func (dbc BackupTemplate) CustomResourceDefinition() *apiextensions.CustomResourceDefinition {
+func (btpl BackupTemplate) CustomResourceDefinition() *apiextensions.CustomResourceDefinition {
 	return crdutils.NewCustomResourceDefinition(crdutils.Config{
 		Group:         SchemeGroupVersion.Group,
 		Plural:        ResourcePluralBackupTemplate,

@@ -340,6 +340,10 @@ spec:
               description: Stats shows statistics of this backup session
               items:
                 properties:
+                  directory:
+                    description: Directory indicates the directory that has been backed
+                      up in this session
+                    type: string
                   fileStats:
                     properties:
                       modifiedFiles:

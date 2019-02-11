@@ -16,7 +16,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
-func CreateOrPatchBackupSession(c cs.StashV1beta1Interface, meta metav1.ObjectMeta, transform func(alert *api.BackupSession) *api.BackupSession) (*api.BackupSession, kutil.VerbType, error) {
+func CreateOrPatchBackupSession(c cs.StashV1beta1Interface, meta metav1.ObjectMeta, transform func(bs *api.BackupSession) *api.BackupSession) (*api.BackupSession, kutil.VerbType, error) {
 	cur, err := c.BackupSessions(meta.Namespace).Get(meta.Name, metav1.GetOptions{})
 	if kerr.IsNotFound(err) {
 		glog.V(3).Infof("Creating BackupSession %s/%s.", meta.Namespace, meta.Name)

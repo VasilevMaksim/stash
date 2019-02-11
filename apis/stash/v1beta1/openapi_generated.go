@@ -625,6 +625,13 @@ func schema_stash_apis_stash_v1beta1_BackupStats(ref common.ReferenceCallback) c
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
 				Properties: map[string]spec.Schema{
+					"directory": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Directory indicates the directory that has been backed up in this session",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"snapshot": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Snapshot indicates the name of the backup snapshot created in this backup session",

@@ -14,7 +14,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
-func CreateOrPatchFunction(c cs.StashV1beta1Interface, meta metav1.ObjectMeta, transform func(alert *api.Function) *api.Function) (*api.Function, kutil.VerbType, error) {
+func CreateOrPatchFunction(c cs.StashV1beta1Interface, meta metav1.ObjectMeta, transform func(fn *api.Function) *api.Function) (*api.Function, kutil.VerbType, error) {
 	cur, err := c.Functions().Get(meta.Name, metav1.GetOptions{})
 	if kerr.IsNotFound(err) {
 		glog.V(3).Infof("Creating Function %s/%s.", meta.Namespace, meta.Name)

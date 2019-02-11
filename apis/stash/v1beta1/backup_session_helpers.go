@@ -16,7 +16,7 @@ func (bs BackupSession) GetSpecHash() string {
 	return strconv.FormatUint(hash.Sum64(), 10)
 }
 
-func (inst BackupSession) CustomResourceDefinition() *apiextensions.CustomResourceDefinition {
+func (bs BackupSession) CustomResourceDefinition() *apiextensions.CustomResourceDefinition {
 	return crdutils.NewCustomResourceDefinition(crdutils.Config{
 		Group:         SchemeGroupVersion.Group,
 		Plural:        ResourcePluralBackupSession,

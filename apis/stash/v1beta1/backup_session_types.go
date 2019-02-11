@@ -51,6 +51,8 @@ type BackupSessionStatus struct {
 }
 
 type BackupStats struct {
+	// Directory indicates the directory that has been backed up in this session
+	Directory string `json:"directory,omitempty"`
 	// Snapshot indicates the name of the backup snapshot created in this backup session
 	Snapshot string `json:"snapshot,omitempty"`
 	// Size indicates the size of target data to backup
