@@ -8,11 +8,11 @@ import (
 	crdutils "github.com/appscode/kutil/apiextensions/v1beta1"
 	"github.com/appscode/kutil/tools/queue"
 	api "github.com/appscode/stash/apis/stash/v1alpha1"
-	api_v1alpha2 "github.com/appscode/stash/apis/stash/v1alpha2"
+	api_v1beta1 "github.com/appscode/stash/apis/stash/v1beta1"
 	cs "github.com/appscode/stash/client/clientset/versioned"
 	stashinformers "github.com/appscode/stash/client/informers/externalversions"
 	stash_listers "github.com/appscode/stash/client/listers/stash/v1alpha1"
-	stash_listers_v1alpha2 "github.com/appscode/stash/client/listers/stash/v1alpha2"
+	stash_listers_v1beta1 "github.com/appscode/stash/client/listers/stash/v1beta1"
 	"github.com/golang/glog"
 	crd_api "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	crd_cs "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1beta1"
@@ -90,17 +90,19 @@ type StashController struct {
 	//BackupConfigurationController
 	bupcQueue    *queue.Worker
 	bupcInformer cache.SharedIndexInformer
-	bupcLister   stash_listers_v1alpha2.BackupConfigurationLister
+	bupcLister   stash_listers_v1beta1.BackupConfigurationLister
 }
 
 func (c *StashController) ensureCustomResourceDefinitions() error {
+	fmt.Println("he.................01")
 	crds := []*crd_api.CustomResourceDefinition{
 		api.Restic{}.CustomResourceDefinition(),
 		api.Recovery{}.CustomResourceDefinition(),
 		api.Repository{}.CustomResourceDefinition(),
-		api_v1alpha2.BackupConfiguration{}.CustomResourceDefinition(),
-		api_v1alpha2.BackupInstance{}.CustomResourceDefinition(),
+		api_v1beta1.BackupConfiguration{}.CustomResourceDefinition(),
+		api_v1beta1.BackupSession{}.CustomResourceDefinition(),
 	}
+	fmt.Println("he.................02")
 	return crdutils.RegisterCRDs(c.crdClient, crds)
 }
 

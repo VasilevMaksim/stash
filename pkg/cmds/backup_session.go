@@ -4,25 +4,25 @@ import (
 	"github.com/appscode/go/log"
 	"github.com/appscode/kutil/meta"
 	cs "github.com/appscode/stash/client/clientset/versioned"
-	backup_instance "github.com/appscode/stash/pkg/backup-instance"
+	backup_session "github.com/appscode/stash/pkg/backup-session"
 	"github.com/spf13/cobra"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-func NewBackupInstance() *cobra.Command {
+func NewBackupSession() *cobra.Command {
 	var (
 		masterURL      string
 		kubeconfigPath string
 
-		opt = backup_instance.Options{
+		opt = backup_session.Options{
 			Namespace: meta.Namespace(),
 		}
 	)
 
 	cmd := &cobra.Command{
-		Use:               "backup_instance",
-		Short:             "backupInastance CRD Create",
+		Use:               "backup_session",
+		Short:             "backupSession CRD Create",
 		DisableAutoGenTag: true,
 		Run: func(cmd *cobra.Command, args []string) {
 			config, err := clientcmd.BuildConfigFromFlags(masterURL, kubeconfigPath)
@@ -32,8 +32,8 @@ func NewBackupInstance() *cobra.Command {
 			kubeClient := kubernetes.NewForConfigOrDie(config)
 			stashClient := cs.NewForConfigOrDie(config)
 
-			ctrl := backup_instance.New(kubeClient, stashClient, opt)
-			err = ctrl.CreateBackupInstanceCrd()
+			ctrl := backup_session.New(kubeClient, stashClient, opt)
+			err = ctrl.CreateBackupSessionCrd()
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -43,7 +43,8 @@ func NewBackupInstance() *cobra.Command {
 
 	cmd.Flags().StringVar(&masterURL, "master", "", "The address of the Kubernetes API server (overrides any value in kubeconfig)")
 	cmd.Flags().StringVar(&kubeconfigPath, "kubeconfig", "", "Path to kubeconfig file with authorization information (the master location is set by the master flag).")
-	cmd.Flags().StringVar(&opt.Name, "backupInstanceName", "", "Set backupInstanceName")
+	cmd.Flags().StringVar(&opt.Name, "backupSessionName", "", "Set backupSessionName")
+	cmd.Flags().StringVar(&opt.Namespace, "backupSessionNamespace", "", "Set backupSessionNamespace")
 
 	return cmd
 }

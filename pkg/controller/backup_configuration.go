@@ -8,7 +8,7 @@ import (
 	batch_util "github.com/appscode/kutil/batch/v1beta1"
 	core_util "github.com/appscode/kutil/core/v1"
 	"github.com/appscode/kutil/tools/queue"
-	api_v1alpha2 "github.com/appscode/stash/apis/stash/v1alpha2"
+	api_v1beta1 "github.com/appscode/stash/apis/stash/v1beta1"
 	"github.com/appscode/stash/client/clientset/versioned/scheme"
 	"github.com/appscode/stash/pkg/docker"
 	"github.com/appscode/stash/pkg/eventer"
@@ -23,11 +23,11 @@ import (
 )
 
 func (c *StashController) initBackupConfigurationWatcher() {
-	c.bupcInformer = c.stashInformerFactory.Stash().V1alpha2().BackupConfigurations().Informer()
+	c.bupcInformer = c.stashInformerFactory.Stash().V1beta1().BackupConfigurations().Informer()
 	c.bupcQueue = queue.New("BackupConfiguration", c.MaxNumRequeues, c.NumThreads, c.runBackupConfigurationInjector)
 	c.bupcInformer.AddEventHandler(&cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
-			if b, ok := obj.(*api_v1alpha2.BackupConfiguration); ok {
+			if b, ok := obj.(*api_v1beta1.BackupConfiguration); ok {
 				ref, rerr := reference.GetReference(scheme.Scheme, b)
 				if rerr == nil {
 					c.recorder.Eventf(
@@ -44,12 +44,12 @@ func (c *StashController) initBackupConfigurationWatcher() {
 			queue.Enqueue(c.bupcQueue.GetQueue(), obj)
 		},
 		UpdateFunc: func(oldObj, newObj interface{}) {
-			oldBupc, ok := oldObj.(*api_v1alpha2.BackupConfiguration)
+			oldBupc, ok := oldObj.(*api_v1beta1.BackupConfiguration)
 			if !ok {
 				log.Errorln("Invalid BackupConfiguration object")
 				return
 			}
-			newbupc, ok := newObj.(*api_v1alpha2.BackupConfiguration)
+			newbupc, ok := newObj.(*api_v1beta1.BackupConfiguration)
 			if !ok {
 				log.Errorln("Invalid BackupConfiguration object")
 				return
@@ -74,7 +74,7 @@ func (c *StashController) initBackupConfigurationWatcher() {
 
 		},
 	})
-	c.bupcLister = c.stashInformerFactory.Stash().V1alpha2().BackupConfigurations().Lister()
+	c.bupcLister = c.stashInformerFactory.Stash().V1beta1().BackupConfigurations().Lister()
 }
 
 // syncToStdout is the business logic of the controller. In this controller it simply prints
@@ -99,11 +99,11 @@ func (c *StashController) runBackupConfigurationInjector(key string) error {
 			return err
 		}
 	} else {
-		backupconfiguration := obj.(*api_v1alpha2.BackupConfiguration)
+		backupconfiguration := obj.(*api_v1beta1.BackupConfiguration)
 		glog.Info("Sync/Add/Update for BackupConfiguration %s", backupconfiguration.GetName())
 		if backupconfiguration.Spec.Target != nil {
-			if backupconfiguration.Spec.Target.Workload != nil {
-				kind := backupconfiguration.Spec.Target.Workload.Kind
+			if backupconfiguration.Spec.Target.Ref != nil {
+				kind := backupconfiguration.Spec.Target.Ref.Kind
 				if kind == workload_api.KindDeployment || kind == workload_api.KindDaemonSet || kind == workload_api.KindReplicationController || kind == workload_api.KindReplicaSet || kind == workload_api.KindStatefulSet {
 					c.EnsureSidecar2(backupconfiguration)
 				}
@@ -229,9 +229,9 @@ func (c *StashController) EnsureSidecarDeleted2(namespace, name string) {
 	}
 }
 
-func (c *StashController) EnsureSidecar2(backupconfiguration *api_v1alpha2.BackupConfiguration) {
-	resource_name := backupconfiguration.Spec.Target.Workload.Name
-	switch backupconfiguration.Spec.Target.Workload.Kind {
+func (c *StashController) EnsureSidecar2(backupconfiguration *api_v1beta1.BackupConfiguration) {
+	resource_name := backupconfiguration.Spec.Target.Ref.Name
+	switch backupconfiguration.Spec.Target.Ref.Kind {
 	case workload_api.KindDeployment:
 		if resource, err := c.dpLister.Deployments(backupconfiguration.Namespace).Get(resource_name); err == nil {
 			key, err := cache.MetaNamespaceKeyFunc(resource)
@@ -272,7 +272,7 @@ func (c *StashController) EnsureSidecar2(backupconfiguration *api_v1alpha2.Backu
 
 }
 
-func (c *StashController) EnsureCronJob(backupconfiguration *api_v1alpha2.BackupConfiguration) error {
+func (c *StashController) EnsureCronJob(backupconfiguration *api_v1beta1.BackupConfiguration) error {
 	image := docker.Docker{
 		Registry: c.DockerRegistry,
 		Image:    docker.ImageStash,
@@ -298,8 +298,8 @@ func (c *StashController) EnsureCronJob(backupconfiguration *api_v1alpha2.Backup
 		// set backup-configuration as cron-job owner
 		in.OwnerReferences = []metav1.OwnerReference{
 			{
-				APIVersion: api_v1alpha2.SchemeGroupVersion.String(),
-				Kind:       api_v1alpha2.ResourceKindBackupConfiguration,
+				APIVersion: api_v1beta1.SchemeGroupVersion.String(),
+				Kind:       api_v1beta1.ResourceKindBackupConfiguration,
 				Name:       backupconfiguration.Name,
 				UID:        backupconfiguration.UID,
 			},
@@ -316,8 +316,9 @@ func (c *StashController) EnsureCronJob(backupconfiguration *api_v1alpha2.Backup
 				ImagePullPolicy: "Always",
 				Image:           image.ToContainerImage(),
 				Args: []string{
-					"backup_instance",
-					fmt.Sprintf("--backupInstanceName=%s", backupconfiguration.Name),
+					"backup_session",
+					fmt.Sprintf("--backupSessionName=%s", backupconfiguration.Name),
+					fmt.Sprintf("--backupSessionNamespace=%s", backupconfiguration.Namespace),
 				},
 			})
 		in.Spec.JobTemplate.Spec.Template.Spec.RestartPolicy = core.RestartPolicyNever

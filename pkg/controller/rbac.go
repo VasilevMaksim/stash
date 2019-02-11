@@ -9,7 +9,7 @@ import (
 	meta_util "github.com/appscode/kutil/meta"
 	rbac_util "github.com/appscode/kutil/rbac/v1"
 	api "github.com/appscode/stash/apis/stash/v1alpha1"
-	api_v1alpha2 "github.com/appscode/stash/apis/stash/v1alpha1"
+	api_v1beta1 "github.com/appscode/stash/apis/stash/v1beta1"
 	"github.com/appscode/stash/client/clientset/versioned/scheme"
 	"github.com/appscode/stash/pkg/util"
 	"github.com/golang/glog"
@@ -91,7 +91,7 @@ func (c *StashController) ensureCronJobRole(resource *core.ObjectReference) erro
 		in.Labels["app"] = "stash"
 		in.Rules = []rbac.PolicyRule{
 			{
-				APIGroups: []string{api_v1alpha2.SchemeGroupVersion.Group},
+				APIGroups: []string{api_v1beta1.SchemeGroupVersion.Group},
 				Resources: []string{"backupinstances"},
 				Verbs:     []string{"create", "patch", "get", "list"},
 			},

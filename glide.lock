@@ -1,5 +1,5 @@
-hash: efa620fd25edc4f945b81e817d76e02a29aac2c57a4670ccb0b603894a7a474b
-updated: 2019-02-06T16:23:21.559722827+06:00
+hash: f91d574d4dca667200cb6ace030511d585abf8ada3829c8164a4ca50f32c2ea3
+updated: 2019-02-11T15:00:37.227877625+06:00
 imports:
 - name: bitbucket.org/ww/goautoneg
   version: 75cd24fc2f2c2a2088577d12123ddee5f54e0675
@@ -41,8 +41,7 @@ imports:
   - registry/admissionreview/v1beta1
   - runtime/serializer/versioning
 - name: github.com/appscode/kutil
-
-  version: b5b6fa2ff0180040757643f9a498ea84d7bd8dd6
+  version: cc179dba2da91f5d52530ead51ae63e2e6ccbfa2
   subpackages:
   - admissionregistration/v1beta1
   - apiextensions/v1beta1
@@ -60,7 +59,6 @@ imports:
   - tools/cli
   - tools/clientcmd
   - tools/queue
-  - tools/restic
 - name: github.com/appscode/mergo
   version: 9f23e2d6bd2a77f959b2bf6acdbefd708a83a4a4
 - name: github.com/appscode/osm
@@ -411,7 +409,7 @@ imports:
 - name: github.com/pkg/errors
   version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/prometheus/client_golang
-  version: 7190de1ef27a67a600698247a86db923cd5b8127
+  version: 12af604cf208d3105ced825c65231b4ecf00a8cc
   subpackages:
   - prometheus
   - prometheus/internal

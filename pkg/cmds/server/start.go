@@ -96,14 +96,17 @@ func (o StashOptions) Config() (*server.StashConfig, error) {
 
 func (o StashOptions) Run(stopCh <-chan struct{}) error {
 	config, err := o.Config()
+	fmt.Println("hello.............01>")
 	if err != nil {
 		return err
 	}
-
+	fmt.Println("hello.............02>")
 	s, err := config.Complete().New()
 	if err != nil {
+		fmt.Println("hello.............04>")
 		return err
 	}
+	fmt.Println("hello.............03>")
 
 	return s.Run(stopCh)
 }
