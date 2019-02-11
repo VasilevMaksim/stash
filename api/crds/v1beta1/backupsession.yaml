@@ -8,7 +8,7 @@ metadata:
   name: backupsessions.stash.appscode.com
 spec:
   additionalPrinterColumns:
-  - JSONPath: .spec.backupConfiguration
+  - JSONPath: .spec.backupConfiguration.name
     name: BackupConfiguration
     type: string
   - JSONPath: .status.phase

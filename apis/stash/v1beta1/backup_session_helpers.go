@@ -43,7 +43,7 @@ func (bs BackupSession) CustomResourceDefinition() *apiextensions.CustomResource
 			{
 				Name:     "BackupConfiguration",
 				Type:     "string",
-				JSONPath: ".spec.backupConfiguration",
+				JSONPath: ".spec.backupConfiguration.name",
 			},
 			{
 				Name:     "Phase",
