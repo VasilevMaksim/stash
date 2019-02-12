@@ -335,21 +335,23 @@ func (c *StashController) EnsureCronJob(backupconfiguration *api_v1beta1.BackupC
 }
 
 func (c *StashController) EnsureCronJobDeleted(namespace, name string) error {
-	//backupconfiguration, err := c.bupcLister.BackupConfigurations(namespace).Get(name)
-	//ref, err := reference.GetReference(scheme.Scheme, backupconfiguration)
-	//if err != nil {
-	//	return err
-	//}
-	//meta := metav1.ObjectMeta{
-	//	Name:      ref.Name,
-	//	Namespace: ref.Namespace,
-	//}
-	//core_util.EnsureOwnerReference(&meta, ref)
-	deletePolicy := metav1.DeletePropagationBackground
-	if err := c.kubeClient.BatchV1beta1().CronJobs(namespace).Delete(name, &metav1.DeleteOptions{
-		PropagationPolicy: &deletePolicy,
-	}); err != nil {
+	backupconfiguration, err := c.bupcLister.BackupConfigurations(namespace).Get(name)
+	ref, err := reference.GetReference(scheme.Scheme, backupconfiguration)
+	if err != nil {
 		return err
 	}
+	meta := metav1.ObjectMeta{
+		Name:      name,
+		Namespace: namespace,
+		OwnerReferences: []metav1.OwnerReference{
+			{
+				APIVersion: api_v1beta1.SchemeGroupVersion.String(),
+				Kind:       api_v1beta1.ResourceKindBackupConfiguration,
+				Name:       backupconfiguration.Name,
+				UID:        backupconfiguration.UID,
+			},
+		},
+	}
+	core_util.EnsureOwnerReference(&meta, ref)
 	return nil
 }
