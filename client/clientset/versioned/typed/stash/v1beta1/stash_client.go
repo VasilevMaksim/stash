@@ -31,8 +31,8 @@ type StashV1beta1Interface interface {
 	BackupSessionsGetter
 	BackupTemplatesGetter
 	FunctionsGetter
-	RecoveryConfigurationsGetter
 	RepositoriesGetter
+	RestoreSessionsGetter
 	TasksGetter
 }
 
@@ -57,12 +57,12 @@ func (c *StashV1beta1Client) Functions() FunctionInterface {
 	return newFunctions(c)
 }
 
-func (c *StashV1beta1Client) RecoveryConfigurations(namespace string) RecoveryConfigurationInterface {
-	return newRecoveryConfigurations(c, namespace)
-}
-
 func (c *StashV1beta1Client) Repositories(namespace string) RepositoryInterface {
 	return newRepositories(c, namespace)
+}
+
+func (c *StashV1beta1Client) RestoreSessions(namespace string) RestoreSessionInterface {
+	return newRestoreSessions(c, namespace)
 }
 
 func (c *StashV1beta1Client) Tasks() TaskInterface {

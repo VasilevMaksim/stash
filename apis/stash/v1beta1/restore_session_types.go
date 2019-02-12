@@ -7,23 +7,23 @@ import (
 )
 
 const (
-	ResourceKindRecoveryConfiguration     = "RecoveryConfiguration"
-	ResourcePluralRecoveryConfiguration   = "recoveryconfigurations"
-	ResourceSingularRecoveryConfiguration = "recoveryconfiguration"
+	ResourceKindRestoreSession     = "RestoreSession"
+	ResourcePluralRestoreSession   = "restoresessions"
+	ResourceSingularRestoreSession = "restoresession"
 )
 
 // +genclient
 // +k8s:openapi-gen=true
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-type RecoveryConfiguration struct {
+type RestoreSession struct {
 	metav1.TypeMeta   `json:",inline,omitempty"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-	Spec              RecoveryConfigurationSpec   `json:"spec,omitempty"`
-	Status            RecoveryConfigurationStatus `json:"status,omitempty"`
+	Spec              RestoreSessionSpec   `json:"spec,omitempty"`
+	Status            RestoreSessionStatus `json:"status,omitempty"`
 }
 
-type RecoveryConfigurationSpec struct {
+type RestoreSessionSpec struct {
 	// Repository refer to the Repository crd that hold backend information
 	Repository *core.LocalObjectReference `json:"repository,omitempty"`
 	// Task specify the Task crd that specifies the steps for recovery process
@@ -43,42 +43,42 @@ type RecoveryConfigurationSpec struct {
 	SecurityScheme *SecurityScheme `json:"securityScheme,omitempty"`
 }
 
-type RecoveryPolicy string
+type RestorePolicy string
 
 const (
-	RecoveryPolicyIfNotRecovered RecoveryPolicy = "IfNotRecovered"
-	RecoveryPolicyOnRestart      RecoveryPolicy = "OnRestart"
+	RestorePolicyIfNotRecovered RestorePolicy = "IfNotRecovered"
+	RestorePolicyOnRestart      RestorePolicy = "OnRestart"
 )
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-type RecoveryConfigurationList struct {
+type RestoreSessionList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []RecoveryConfiguration `json:"items,omitempty"`
+	Items           []RestoreSession `json:"items,omitempty"`
 }
 
-type RecoveryPhase string
+type RestorePhase string
 
 const (
-	RecoveryPending   RecoveryPhase = "Pending"
-	RecoveryRunning   RecoveryPhase = "Running"
-	RecoverySucceeded RecoveryPhase = "Succeeded"
-	RecoveryFailed    RecoveryPhase = "Failed"
-	RecoveryUnknown   RecoveryPhase = "Unknown"
+	RestorePending   RestorePhase = "Pending"
+	RestoreRunning   RestorePhase = "Running"
+	RestoreSucceeded RestorePhase = "Succeeded"
+	RestoreFailed    RestorePhase = "Failed"
+	RestoreUnknown   RestorePhase = "Unknown"
 )
 
-type RecoveryConfigurationStatus struct {
+type RestoreSessionStatus struct {
 	// observedGeneration is the most recent generation observed for this resource. It corresponds to the
 	// resource's generation, which is updated on mutation by the API Server.
 	// +optional
 	ObservedGeneration *types.IntHash `json:"observedGeneration,omitempty"`
-	Phase              RecoveryPhase  `json:"phase,omitempty"`
+	Phase              RestorePhase   `json:"phase,omitempty"`
 	Stats              []RestoreStats `json:"stats,omitempty"`
 }
 
 type RestoreStats struct {
-	Path     string        `json:"path,omitempty"`
-	Phase    RecoveryPhase `json:"phase,omitempty"`
-	Duration string        `json:"duration,omitempty"`
+	Path     string       `json:"path,omitempty"`
+	Phase    RestorePhase `json:"phase,omitempty"`
+	Duration string       `json:"duration,omitempty"`
 }

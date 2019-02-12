@@ -42,14 +42,6 @@ type BackupTemplateListerExpansion interface{}
 // FunctionLister.
 type FunctionListerExpansion interface{}
 
-// RecoveryConfigurationListerExpansion allows custom methods to be added to
-// RecoveryConfigurationLister.
-type RecoveryConfigurationListerExpansion interface{}
-
-// RecoveryConfigurationNamespaceListerExpansion allows custom methods to be added to
-// RecoveryConfigurationNamespaceLister.
-type RecoveryConfigurationNamespaceListerExpansion interface{}
-
 // RepositoryListerExpansion allows custom methods to be added to
 // RepositoryLister.
 type RepositoryListerExpansion interface{}
@@ -57,6 +49,14 @@ type RepositoryListerExpansion interface{}
 // RepositoryNamespaceListerExpansion allows custom methods to be added to
 // RepositoryNamespaceLister.
 type RepositoryNamespaceListerExpansion interface{}
+
+// RestoreSessionListerExpansion allows custom methods to be added to
+// RestoreSessionLister.
+type RestoreSessionListerExpansion interface{}
+
+// RestoreSessionNamespaceListerExpansion allows custom methods to be added to
+// RestoreSessionNamespaceLister.
+type RestoreSessionNamespaceListerExpansion interface{}
 
 // TaskListerExpansion allows custom methods to be added to
 // TaskLister.

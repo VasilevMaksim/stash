@@ -44,12 +44,12 @@ func (c *FakeStashV1beta1) Functions() v1beta1.FunctionInterface {
 	return &FakeFunctions{c}
 }
 
-func (c *FakeStashV1beta1) RecoveryConfigurations(namespace string) v1beta1.RecoveryConfigurationInterface {
-	return &FakeRecoveryConfigurations{c, namespace}
-}
-
 func (c *FakeStashV1beta1) Repositories(namespace string) v1beta1.RepositoryInterface {
 	return &FakeRepositories{c, namespace}
+}
+
+func (c *FakeStashV1beta1) RestoreSessions(namespace string) v1beta1.RestoreSessionInterface {
+	return &FakeRestoreSessions{c, namespace}
 }
 
 func (c *FakeStashV1beta1) Tasks() v1beta1.TaskInterface {

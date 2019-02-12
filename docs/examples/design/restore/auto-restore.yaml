@@ -7,8 +7,9 @@ metadata:
     app: stash-demo
   # This annotations indicates that data shoul be recovered on each restart of the workload
   annotations:
-    stash.appscode.com/recoveryconfiguration: "my-recovery-config"
-    stash.appscode.com/recoverypolicy: "OnRestart"
+    stash.appscode.com/restorepolicy: "OnRestart"
+    stash.appscode.com/repository: "demo-backup-repo"
+    stash.appscode.com/directories: "[/source/data]"
 spec:
   replicas: 1
   selector:

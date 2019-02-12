@@ -31,59 +31,59 @@ import (
 	cache "k8s.io/client-go/tools/cache"
 )
 
-// RecoveryConfigurationInformer provides access to a shared informer and lister for
-// RecoveryConfigurations.
-type RecoveryConfigurationInformer interface {
+// RestoreSessionInformer provides access to a shared informer and lister for
+// RestoreSessions.
+type RestoreSessionInformer interface {
 	Informer() cache.SharedIndexInformer
-	Lister() v1beta1.RecoveryConfigurationLister
+	Lister() v1beta1.RestoreSessionLister
 }
 
-type recoveryConfigurationInformer struct {
+type restoreSessionInformer struct {
 	factory          internalinterfaces.SharedInformerFactory
 	tweakListOptions internalinterfaces.TweakListOptionsFunc
 	namespace        string
 }
 
-// NewRecoveryConfigurationInformer constructs a new informer for RecoveryConfiguration type.
+// NewRestoreSessionInformer constructs a new informer for RestoreSession type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewRecoveryConfigurationInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
-	return NewFilteredRecoveryConfigurationInformer(client, namespace, resyncPeriod, indexers, nil)
+func NewRestoreSessionInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
+	return NewFilteredRestoreSessionInformer(client, namespace, resyncPeriod, indexers, nil)
 }
 
-// NewFilteredRecoveryConfigurationInformer constructs a new informer for RecoveryConfiguration type.
+// NewFilteredRestoreSessionInformer constructs a new informer for RestoreSession type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewFilteredRecoveryConfigurationInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
+func NewFilteredRestoreSessionInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
 	return cache.NewSharedIndexInformer(
 		&cache.ListWatch{
 			ListFunc: func(options v1.ListOptions) (runtime.Object, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.StashV1beta1().RecoveryConfigurations(namespace).List(options)
+				return client.StashV1beta1().RestoreSessions(namespace).List(options)
 			},
 			WatchFunc: func(options v1.ListOptions) (watch.Interface, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.StashV1beta1().RecoveryConfigurations(namespace).Watch(options)
+				return client.StashV1beta1().RestoreSessions(namespace).Watch(options)
 			},
 		},
-		&stashv1beta1.RecoveryConfiguration{},
+		&stashv1beta1.RestoreSession{},
 		resyncPeriod,
 		indexers,
 	)
 }
 
-func (f *recoveryConfigurationInformer) defaultInformer(client versioned.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
-	return NewFilteredRecoveryConfigurationInformer(client, f.namespace, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
+func (f *restoreSessionInformer) defaultInformer(client versioned.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
+	return NewFilteredRestoreSessionInformer(client, f.namespace, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
 }
 
-func (f *recoveryConfigurationInformer) Informer() cache.SharedIndexInformer {
-	return f.factory.InformerFor(&stashv1beta1.RecoveryConfiguration{}, f.defaultInformer)
+func (f *restoreSessionInformer) Informer() cache.SharedIndexInformer {
+	return f.factory.InformerFor(&stashv1beta1.RestoreSession{}, f.defaultInformer)
 }
 
-func (f *recoveryConfigurationInformer) Lister() v1beta1.RecoveryConfigurationLister {
-	return v1beta1.NewRecoveryConfigurationLister(f.Informer().GetIndexer())
+func (f *restoreSessionInformer) Lister() v1beta1.RestoreSessionLister {
+	return v1beta1.NewRestoreSessionLister(f.Informer().GetIndexer())
 }

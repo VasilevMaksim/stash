@@ -6,14 +6,14 @@ import (
 	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 )
 
-func (c RecoveryConfiguration) CustomResourceDefinition() *apiextensions.CustomResourceDefinition {
+func (c RestoreSession) CustomResourceDefinition() *apiextensions.CustomResourceDefinition {
 	return crdutils.NewCustomResourceDefinition(crdutils.Config{
 		Group:         SchemeGroupVersion.Group,
-		Plural:        ResourcePluralRecoveryConfiguration,
-		Singular:      ResourceSingularRecoveryConfiguration,
-		Kind:          ResourceKindRecoveryConfiguration,
-		ShortNames:    []string{"rec"},
-		Categories:    []string{"stash", "appscode", "recovery"},
+		Plural:        ResourcePluralRestoreSession,
+		Singular:      ResourceSingularRestoreSession,
+		Kind:          ResourceKindRestoreSession,
+		ShortNames:    []string{"restore"},
+		Categories:    []string{"stash", "appscode", "restore"},
 		ResourceScope: string(apiextensions.NamespaceScoped),
 		Versions: []apiextensions.CustomResourceDefinitionVersion{
 			{
@@ -25,7 +25,7 @@ func (c RecoveryConfiguration) CustomResourceDefinition() *apiextensions.CustomR
 		Labels: crdutils.Labels{
 			LabelsMap: map[string]string{"app": "stash"},
 		},
-		SpecDefinitionName:      "github.com/appscode/stash/apis/stash/v1beta1.RecoveryConfiguration",
+		SpecDefinitionName:      "github.com/appscode/stash/apis/stash/v1beta1.RestoreSession",
 		EnableValidation:        true,
 		GetOpenAPIDefinitions:   GetOpenAPIDefinitions,
 		EnableStatusSubresource: apis.EnableStatusSubresource,

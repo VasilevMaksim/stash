@@ -32,10 +32,10 @@ type Interface interface {
 	BackupTemplates() BackupTemplateInformer
 	// Functions returns a FunctionInformer.
 	Functions() FunctionInformer
-	// RecoveryConfigurations returns a RecoveryConfigurationInformer.
-	RecoveryConfigurations() RecoveryConfigurationInformer
 	// Repositories returns a RepositoryInformer.
 	Repositories() RepositoryInformer
+	// RestoreSessions returns a RestoreSessionInformer.
+	RestoreSessions() RestoreSessionInformer
 	// Tasks returns a TaskInformer.
 	Tasks() TaskInformer
 }
@@ -71,14 +71,14 @@ func (v *version) Functions() FunctionInformer {
 	return &functionInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
 }
 
-// RecoveryConfigurations returns a RecoveryConfigurationInformer.
-func (v *version) RecoveryConfigurations() RecoveryConfigurationInformer {
-	return &recoveryConfigurationInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
-}
-
 // Repositories returns a RepositoryInformer.
 func (v *version) Repositories() RepositoryInformer {
 	return &repositoryInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+}
+
+// RestoreSessions returns a RestoreSessionInformer.
+func (v *version) RestoreSessions() RestoreSessionInformer {
+	return &restoreSessionInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }
 
 // Tasks returns a TaskInformer.

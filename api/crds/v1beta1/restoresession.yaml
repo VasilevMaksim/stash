@@ -5,7 +5,7 @@ metadata:
   creationTimestamp: null
   labels:
     app: stash
-  name: recoveryconfigurations.stash.appscode.com
+  name: restoresessions.stash.appscode.com
 spec:
   additionalPrinterColumns:
   - JSONPath: .spec.repository.name
@@ -25,12 +25,12 @@ spec:
     categories:
     - stash
     - appscode
-    - recovery
-    kind: RecoveryConfiguration
-    plural: recoveryconfigurations
+    - restore
+    kind: RestoreSession
+    plural: restoresessions
     shortNames:
-    - rec
-    singular: recoveryconfiguration
+    - restore
+    singular: restoresession
   scope: Namespaced
   subresources:
     status: {}

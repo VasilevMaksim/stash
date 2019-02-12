@@ -4,21 +4,23 @@ We are going to make a design overhaul of Stash to simplify backup and recovery 
 
 We  have introduced some new crd  such as [Function](#function), [Task](#action) etc. and made whole process more modular. This will make easy to add support for new features and the users will also be able to customize backup process. Furthermore, this will make stash resources inter-operable between different tools and even might allow to use stash resources as function in serverless concept.
 
-**We are hoping this design will graduate to GA. So, we are taking security seriously. We are going to make sure that nobody can bypass clusters security using Stash. This might requires to remove some existing features (for example, recover from different namespace). However, we will provide an alternate way to cover those use cases.**
+**We are hoping this design will graduate to GA. So, we are taking security seriously. We are going to make sure that nobody can bypass clusters security using Stash. This might requires to remove some existing features (for example, restore from different namespace). However, we will provide an alternate way to cover those use cases.**
 
 ## Goal
 
 Goal of this new design to support following features:
-- [Schedule Backup and Recover Workload Data](#schedule-backup-and-recover-workload-data)
-- [Schedule Backup and Recover PVC](#schedule-backup-and-recover-pvc)
-- [Schedule Backup and Recover Database](#schedule-backup-and-recover-database)
+- [Schedule Backup and Restore Workload Data](#schedule-backup-and-restore-workload-data)
+- [Schedule Backup and Restore PVC](#schedule-backup-and-restore-pvc)
+- [Schedule Backup and Restore Database](#schedule-backup-and-restore-database)
 - [Schedule Backup Cluster YAMLs](#schedule-backup-cluster-yamls)
-- [Trigger  Backup Instantly](#trigger-backup-instantly)
+- [Trigger Backup Instantly](#trigger-backup-instantly)
 - [Default Backup](#default-backup)
-- [Auto RecoveryConfiguration](#auto-recovery)
-- [Stash cli/kubectl plugin](#stash-clikubectl-plugin)
+- [Auto Restore](#auto-restore)
+- [Stash cli/kubectl-plugin](#stash-clikubectl-plugin)
+- [Function](#function)
+- [Task](#task)
 
-## Schedule Backup and Recover Workload Data
+## Schedule Backup and Restore Workload Data
 
 ### Backup Workload Data
 
@@ -106,19 +108,19 @@ status:
       unmodified: 0
 ```
 
-### Recover Workload Data
+### Restore Workload Data
 
-User will be able to recover backed up data  either into a separate volume or into the same workload from where the backup was taken. Here, is an example for recovering into same workload.
+User will be able to restore backed up data  either into a separate volume or into the same workload from where the backup was taken. Here, is an example for recovering into same workload.
 
 **What user have to do?**
 
-- Create a `RecoveryConfiguration` crd pointing `target` field to the workload.
+- Create a `RestoreSession` crd pointing `target` field to the workload.
 
-Sample `RecoveryConfiguration` crd to recover into same workload:
+Sample `RestoreSession` crd to restore into same workload:
 
 ```yaml
 apiVersion: stash.appscode.com/v1beta1
-kind: RecoveryConfiguration
+kind: RestoreSession
 metadata:
   name: recovery-database-demo
   namespace: demo
@@ -136,13 +138,13 @@ spec:
 
 **How it will work?**
 
-- When Stash will find a `RecoveryConfiguration` crd created to recover into a workload, it will inject a `init-container` to the targeted workload.
+- When Stash will find a `RestoreSession` crd created to restore into a workload, it will inject a `init-container` to the targeted workload.
 - Then, it will restart the workload.
-- The `init-container` will recover data inside the workload.
+- The `init-container` will restore data inside the workload.
 
-> **Warning:** Recover in same workload require to restart the workload. So, there will be downtime of the workload.
+> **Warning:** Restore in same workload require to restart the workload. So, there will be downtime of the workload.
 
-## Schedule Backup and Recover PVC
+## Schedule Backup and Restore PVC
 
 ### Backup PVC
 
@@ -165,7 +167,7 @@ metadata:
 spec:
   schedule: '@every 1h'
   # task indicates Task crd that specifies the steps to backup a volume.
-  # stash will create some default Task crd  while install to backup/recover various resources.
+  # stash will create some default Task crd  while install to backup/restore various resources.
   # user can also crate their own Task to customize backup/recovery
   task:
     name: volumeBackup
@@ -190,26 +192,26 @@ spec:
 1. Stash will create a `CronJob` using information of respective `Task` crd specified by `task` field.
 2. The `CronJob` will take periodic backup of the target volume.
 
-### Recover PVC
+### Restore PVC
 
-User will be able to recover backed up data  into a  volume.
+User will be able to restore backed up data  into a  volume.
 
 **What user have to do?**
 
-- Create a `RecoveryConfiguration` crd pointing `target` field to the target volume where the recovered data will be stored.
+- Create a `RestoreSession` crd pointing `target` field to the target volume where the recovered data will be stored.
 
-Sample `RecoveryConfiguration` crd to recover into a volume:
+Sample `RestoreSession` crd to restore into a volume:
 
 ```yaml
 apiVersion: stash.appscode.com/v1beta1
-kind: RecoveryConfiguration
+kind: RestoreSession
 metadata:
   name: recovery-volume-demo
   namespace: demo
 spec:
   repository:
     name: stash-backup-repo
-  # task indicates Task crd that specifies steps to recover a volume
+  # task indicates Task crd that specifies steps to restore a volume
   task:
     name: volumeRecovery
   target: # target indicates where the recovered data will be stored
@@ -224,10 +226,10 @@ spec:
 
 **How it will work?**
 
-- When Stash will find a `RecoveryConfiguration` crd created to recover into a volume, it will launch a Job to recover into that volume.
-- The recovery Job will recover and store recovered data to the specified volume.
+- When Stash will find a `RestoreSession` crd created to restore into a volume, it will launch a Job to restore into that volume.
+- The recovery Job will restore and store recovered data to the specified volume.
 
-## Schedule Backup and Recover Database
+## Schedule Backup and Restore Database
 
 ### Backup Database
 
@@ -295,29 +297,29 @@ spec:
 
 - When Stash will see a `BackupConfiguration` crd for database backup, it will lunch  a `CronJob` to take periodic backup of this database.
 
-### Recover Database
+### Restore Database
 
 User will be able to initialize a database from backed up snapshot.
 
 **What user have to do?**
 
-- Create a `RecoveryConfiguration` crd with `target` field pointing to respective `AppBinding` crd of the target database.
+- Create a `RestoreSession` crd with `target` field pointing to respective `AppBinding` crd of the target database.
 
-Sample `RecoveryConfiguration` crd to recover database:
+Sample `RestoreSession` crd to restore database:
 
 ```yaml
 apiVersion: stash.appscode.com/v1beta1
-kind: RecoveryConfiguration
+kind: RestoreSession
 metadata:
   name: database-recovery-demo
   namespace: demo
 spec:
   repository:
     name: stash-backup-repo
-  # task indicates Task crd that specifies the steps to recover Postgres database
+  # task indicates Task crd that specifies the steps to restore Postgres database
   task:
     name: pgRecovery
-  target: # target indicates where to recover
+  target: # target indicates where to restore
     # indicates the respective AppBinding crd for target database that we want to initialize from backup
     ref:
       apiVersion: appcatalog.appscode.com/v1alpha1
@@ -327,13 +329,13 @@ spec:
 
 **How it will work?:**
 
-- Stash will lunch a Job to recover the backed up database and initialize target with this recovered data.
+- Stash will lunch a Job to restore the backed up database and initialize target with this recovered data.
 
 ## Schedule Backup Cluster YAMLs
 
-User will be able to backup yaml of the cluster resources. However, currently stash will not provide automatic recover cluster from the YAMLs. So, user will have to create them manually.
+User will be able to backup yaml of the cluster resources. However, currently stash will not provide automatic restore cluster from the YAMLs. So, user will have to create them manually.
 
-In future, Stash might be able to backup and recover not only YAMLs but also entire cluster.
+In future, Stash might be able to backup and restore not only YAMLs but also entire cluster.
 
 **What user have to do?**
 
@@ -567,36 +569,15 @@ spec:
 - Stash will watch the workloads, volume and `AppBinding` crds. When Stash will find an workload/volume/AppBinding crd with these annotations, it will create a `Repository` crd and a `BackupConfiguration` crd using the information from respective `Task`.
 - Then, Stash will take normal backup as discussed earlier.
 
-## Auto RecoveryConfiguration
+## Auto Restore
 
-User will be also able to configure an automatic recovery for a particular workload. Each time the workload restart, at first it will perform recovery then original workload's container will start.
+User will be also able to configure an automatic recovery for a particular workload. Each time the workload restart, at first it will perform restore data from backup then original workload's container will start.
 
 **What user have to do?**
 
-- Create a `RecoveryConfiguration` crd.
-- Then, user has to provide a annotation in the workload.
+- User will have to provide some annotations in the workload.
 
-Sample `RecoveryConfiguration` crd:
-
-```yaml
-apiVersion: stash.appscode.com/v1beta1
-kind: RecoveryConfiguration
-metadata:
-  name: recovery-database-demo
-  namespace: demo
-spec:
-  repository:
-    name: stash-backup-repo
-  target: # target indicates where the recovered data will be stored
-    ref:
-      apiVersion: apps/v1
-      kind: Deployment
-      name: stash-demo
-    directories: # indicates which directories will be recovered
-    - /source/data
-```
-
-Sample workload wit annotation to recover on restart:
+Sample workload wit annotation to restore on restart:
 
 ```yaml
 apiVersion: apps/v1
@@ -608,8 +589,9 @@ metadata:
     app: stash-demo
   # This annotations indicates that data shoul be recovered on each restart of the workload
   annotations:
-    stash.appscode.com/recoveryconfiguration: "my-recovery-config"
-    stash.appscode.com/recoverypolicy: "OnRestart"
+    stash.appscode.com/restorepolicy: "OnRestart"
+    stash.appscode.com/repository: "demo-backup-repo"
+    stash.appscode.com/directories: "[/source/data]"
 spec:
   replicas: 1
   selector:
@@ -640,7 +622,7 @@ spec:
 
 **How it will work?**
 
-- When Stash will see a `RecoveryConfiguration` crd configured for auto recovery, it will inject an `init-container` to the target.
+- When Stash will see a `RestoreSession` crd configured for auto recovery, it will inject an `init-container` to the target.
 - The `init-container` will perform recovery on each restart.
 
 ## Stash cli/kubectl-plugin
@@ -737,7 +719,7 @@ spec:
 #### pgRecovery
 
 ```yaml
-# pgRecovery function recover a PostgreSQL database
+# pgRecovery function restore a PostgreSQL database
 apiVersion: stash.appscode.com/v1beta1
 kind: Function
 metadata:
@@ -747,7 +729,7 @@ spec:
     image:  appscodeci/postgresql-tool:v1
     name:  postgres-tool
     args:
-    - recover
+    - restore
     - --provider=${provider}
     - --hostname=${hostname}
     - --path=${repoDir}
@@ -800,7 +782,7 @@ spec:
 ## stashPostRecovery
 
 ```yaml
-# stashPostRecovery update RecoveryConfiguration status for respective recovery
+# stashPostRecovery update RestoreSession status for respective recovery
 apiVersion: stash.appscode.com/v1beta1
 kind: Function
 metadata:
@@ -862,7 +844,7 @@ spec:
 #### pgRecovery
 
 ```yaml
-# pgRecovery specifies required functions and their inputs to recover PostgreSQL database
+# pgRecovery specifies required functions and their inputs to restore PostgreSQL database
 apiVersion: stash.appscode.com/v1beta1
 kind: Task
 metadata:
