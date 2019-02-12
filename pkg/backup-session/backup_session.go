@@ -3,8 +3,9 @@ package backup_session
 import (
 	"github.com/appscode/go/crypto/rand"
 	api_v1beta1 "github.com/appscode/stash/apis/stash/v1beta1"
-	cs "github.com/appscode/stash/client/clientset/versioned"
-	"github.com/appscode/stash/client/clientset/versioned/typed/stash/v1beta1"
+
+	//cs "github.com/appscode/stash/client/clientset/versioned"
+	cs "github.com/appscode/stash/client/clientset/versioned/typed/stash/v1beta1"
 	"github.com/appscode/stash/client/clientset/versioned/typed/stash/v1beta1/util"
 	"github.com/tamalsaha/go-oneliners"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -14,9 +15,8 @@ import (
 
 type Controller struct {
 	Options
-	stashClient        cs.Interface
 	k8sClient          kubernetes.Interface
-	stastv1beta1Client v1beta1.StashV1beta1Interface
+	stashv1beta1Client cs.StashV1beta1Interface
 }
 
 type Options struct {
@@ -24,11 +24,11 @@ type Options struct {
 	Namespace string
 }
 
-func New(k8sClient kubernetes.Interface, stashClient cs.Interface, opt Options) *Controller {
+func New(k8sClient kubernetes.Interface, stashv1betaClient cs.StashV1beta1Interface, opt Options) *Controller {
 	return &Controller{
-		k8sClient:   k8sClient,
-		stashClient: stashClient,
-		Options:     opt,
+		k8sClient:          k8sClient,
+		stashv1beta1Client: stashv1betaClient,
+		Options:            opt,
 	}
 }
 
@@ -49,8 +49,12 @@ func (c *Controller) CreateBackupSessionCrd() error {
 			},
 		},
 	}
-	backupSession, _, err := util.CreateOrPatchBackupSession(c.stastv1beta1Client, backupSessionCrd.ObjectMeta, func(in *api_v1beta1.BackupSession) *api_v1beta1.BackupSession {
 
+	backupSession, _, err := util.CreateOrPatchBackupSession(c.stashv1beta1Client, backupSessionCrd.ObjectMeta, func(in *api_v1beta1.BackupSession) *api_v1beta1.BackupSession {
+
+		if in.Spec.BackupConfiguration == nil {
+			in.Spec.BackupConfiguration = &core.LocalObjectReference{}
+		}
 		in.Spec.BackupConfiguration.Name = backupSessionCrd.Spec.BackupConfiguration.Name
 
 		return in
@@ -59,10 +63,6 @@ func (c *Controller) CreateBackupSessionCrd() error {
 	if err != nil {
 		return err
 	}
-	//backupInstance, err := c.stashClient.StashV1beta1().BackupSessions(c.Namespace).Create(backupSessionCrd)
-	//if err != nil {
-	//	return err
-	//}
 	oneliners.PrettyJson(backupSession)
 
 	return nil

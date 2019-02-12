@@ -92,6 +92,7 @@ func (c *StashController) runBackupConfigurationInjector(key string) error {
 		if err != nil {
 			return err
 		}
+
 		c.EnsureSidecarDeleted2(namespace, name)
 		err = c.EnsureCronJobDeleted(namespace, name)
 		fmt.Println(err)
@@ -334,13 +335,20 @@ func (c *StashController) EnsureCronJob(backupconfiguration *api_v1beta1.BackupC
 }
 
 func (c *StashController) EnsureCronJobDeleted(namespace, name string) error {
-
+	//ref, err := reference.GetReference(scheme.Scheme, backupconfiguration)
+	//if err != nil {
+	//	return err
+	//}
+	//meta := metav1.ObjectMeta{
+	//	Name:      ref.Name,
+	//	Namespace: ref.Namespace,
+	//}
+	//core_util.EnsureOwnerReference(&meta, ref)
 	deletePolicy := metav1.DeletePropagationBackground
 	if err := c.kubeClient.BatchV1beta1().CronJobs(namespace).Delete(name, &metav1.DeleteOptions{
 		PropagationPolicy: &deletePolicy,
 	}); err != nil {
 		return err
 	}
-
 	return nil
 }

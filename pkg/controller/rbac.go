@@ -92,7 +92,7 @@ func (c *StashController) ensureCronJobRole(resource *core.ObjectReference) erro
 		in.Rules = []rbac.PolicyRule{
 			{
 				APIGroups: []string{api_v1beta1.SchemeGroupVersion.Group},
-				Resources: []string{"backupinstances"},
+				Resources: []string{"backupsessions"},
 				Verbs:     []string{"create", "patch", "get", "list"},
 			},
 		}
