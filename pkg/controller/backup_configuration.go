@@ -82,6 +82,7 @@ func (c *StashController) initBackupConfigurationWatcher() {
 // The retry logic should not be part of the business logic.
 func (c *StashController) runBackupConfigurationInjector(key string) error {
 	obj, exists, err := c.bupcInformer.GetIndexer().GetByKey(key)
+	backupconfiguration := obj.(*api_v1beta1.BackupConfiguration)
 	if err != nil {
 		glog.Errorf("Fetching object with key %s from store failed with %v", key, err)
 		return err
@@ -92,14 +93,14 @@ func (c *StashController) runBackupConfigurationInjector(key string) error {
 		if err != nil {
 			return err
 		}
+
 		c.EnsureSidecarDeleted2(namespace, name)
-		err = c.EnsureCronJobDeleted(namespace, name)
+		err = c.EnsureCronJobDeleted(backupconfiguration)
 		fmt.Println(err)
 		if err != nil {
 			return err
 		}
 	} else {
-		backupconfiguration := obj.(*api_v1beta1.BackupConfiguration)
 		glog.Info("Sync/Add/Update for BackupConfiguration %s", backupconfiguration.GetName())
 		if backupconfiguration.Spec.Target != nil {
 			if backupconfiguration.Spec.Target.Ref != nil {
@@ -333,14 +334,15 @@ func (c *StashController) EnsureCronJob(backupconfiguration *api_v1beta1.BackupC
 	return nil
 }
 
-func (c *StashController) EnsureCronJobDeleted(namespace, name string) error {
-
-	deletePolicy := metav1.DeletePropagationBackground
-	if err := c.kubeClient.BatchV1beta1().CronJobs(namespace).Delete(name, &metav1.DeleteOptions{
-		PropagationPolicy: &deletePolicy,
-	}); err != nil {
+func (c *StashController) EnsureCronJobDeleted(backupconfiguration *api_v1beta1.BackupConfiguration) error {
+	ref, err := reference.GetReference(scheme.Scheme, backupconfiguration)
+	if err != nil {
 		return err
 	}
-
+	meta := metav1.ObjectMeta{
+		Name:      ref.Name,
+		Namespace: ref.Namespace,
+	}
+	core_util.EnsureOwnerReference(&meta, ref)
 	return nil
 }

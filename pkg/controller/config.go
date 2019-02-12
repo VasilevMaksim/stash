@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"time"
 
 	reg_util "github.com/appscode/kutil/admissionregistration/v1beta1"
@@ -49,7 +48,6 @@ func NewConfig(clientConfig *rest.Config) *Config {
 }
 
 func (c *Config) New() (*StashController, error) {
-	fmt.Println("hi..............01")
 	if err := discovery.IsDefaultSupportedVersion(c.KubeClient); err != nil {
 		return nil, err
 	}
@@ -57,7 +55,6 @@ func (c *Config) New() (*StashController, error) {
 	tweakListOptions := func(opt *metav1.ListOptions) {
 		opt.IncludeUninitialized = true
 	}
-	fmt.Println("hi..............02")
 	ctrl := &StashController{
 		config:       c.config,
 		clientConfig: c.ClientConfig,
@@ -72,12 +69,10 @@ func (c *Config) New() (*StashController, error) {
 		stashInformerFactory: stashinformers.NewSharedInformerFactory(c.StashClient, c.ResyncPeriod),
 		recorder:             eventer.NewEventRecorder(c.KubeClient, "stash-operator"),
 	}
-	fmt.Println("hi..............03")
 
 	if err := ctrl.ensureCustomResourceDefinitions(); err != nil {
 		return nil, err
 	}
-	fmt.Println("hi..............0000004")
 	if c.EnableMutatingWebhook {
 		if err := reg_util.UpdateMutatingWebhookCABundle(c.ClientConfig, mutatingWebhook); err != nil {
 			return nil, err
@@ -94,7 +89,6 @@ func (c *Config) New() (*StashController, error) {
 			return nil, err
 		}
 	}
-	fmt.Println("hi..............04")
 	ctrl.initNamespaceWatcher()
 	ctrl.initResticWatcher()
 	ctrl.initRecoveryWatcher()
@@ -106,7 +100,6 @@ func (c *Config) New() (*StashController, error) {
 	ctrl.initReplicaSetWatcher()
 	ctrl.initJobWatcher()
 	ctrl.initBackupConfigurationWatcher()
-	fmt.Println("hi..............")
 
 	return ctrl, nil
 }

@@ -94,7 +94,6 @@ type StashController struct {
 }
 
 func (c *StashController) ensureCustomResourceDefinitions() error {
-	fmt.Println("he.................01")
 	crds := []*crd_api.CustomResourceDefinition{
 		api.Restic{}.CustomResourceDefinition(),
 		api.Recovery{}.CustomResourceDefinition(),
@@ -102,7 +101,6 @@ func (c *StashController) ensureCustomResourceDefinitions() error {
 		api_v1beta1.BackupConfiguration{}.CustomResourceDefinition(),
 		api_v1beta1.BackupSession{}.CustomResourceDefinition(),
 	}
-	fmt.Println("he.................02")
 	return crdutils.RegisterCRDs(c.crdClient, crds)
 }
 

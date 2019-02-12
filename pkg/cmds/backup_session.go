@@ -1,9 +1,12 @@
 package cmds
 
 import (
+	"fmt"
+
 	"github.com/appscode/go/log"
-	"github.com/appscode/kutil/meta"
-	cs "github.com/appscode/stash/client/clientset/versioned"
+
+	//cs "github.com/appscode/stash/client/clientset/versioned"
+	cs "github.com/appscode/stash/client/clientset/versioned/typed/stash/v1beta1"
 	backup_session "github.com/appscode/stash/pkg/backup-session"
 	"github.com/spf13/cobra"
 	"k8s.io/client-go/kubernetes"
@@ -16,7 +19,7 @@ func NewBackupSession() *cobra.Command {
 		kubeconfigPath string
 
 		opt = backup_session.Options{
-			Namespace: meta.Namespace(),
+			//Namespace: meta.Namespace(),
 		}
 	)
 
@@ -30,13 +33,15 @@ func NewBackupSession() *cobra.Command {
 				log.Fatalf("Could not get Kubernetes config: %s", err)
 			}
 			kubeClient := kubernetes.NewForConfigOrDie(config)
-			stashClient := cs.NewForConfigOrDie(config)
+			stashv1beta1Client := cs.NewForConfigOrDie(config)
 
-			ctrl := backup_session.New(kubeClient, stashClient, opt)
+			ctrl := backup_session.New(kubeClient, stashv1beta1Client, opt)
+			fmt.Println("hello...........01")
 			err = ctrl.CreateBackupSessionCrd()
 			if err != nil {
 				log.Fatal(err)
 			}
+			fmt.Println("hello...........02")
 
 		},
 	}

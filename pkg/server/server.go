@@ -105,9 +105,7 @@ func (c completedConfig) New() (*StashServer, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("bello............")
 	ctrl, err := c.ExtraConfig.New()
-	fmt.Println("bello............02")
 	if err != nil {
 		return nil, err
 	}
