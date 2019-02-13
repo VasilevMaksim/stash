@@ -105,10 +105,9 @@ func (c *StashController) runBackupConfigurationInjector(key string) error {
 		if backupconfiguration.Spec.Target != nil {
 			if backupconfiguration.Spec.Target.Ref != nil {
 				kind := backupconfiguration.Spec.Target.Ref.Kind
-				if kind == workload_api.KindDeployment || kind == workload_api.KindDaemonSet || kind == workload_api.KindReplicationController || kind == workload_api.KindReplicaSet || kind == workload_api.KindStatefulSet {
+				if util.BackupModel(kind) == util.ModelSidecar {
 					c.EnsureSidecar2(backupconfiguration)
 				}
-
 			}
 			err := c.EnsureCronJob(backupconfiguration)
 			if err != nil {

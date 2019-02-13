@@ -8,6 +8,7 @@ import (
 
 	"github.com/appscode/go/log"
 	"github.com/appscode/go/types"
+	workload_api "github.com/appscode/kubernetes-webhook-util/apis/workload/v1"
 	core_util "github.com/appscode/kutil/core/v1"
 	"github.com/appscode/kutil/meta"
 	"github.com/appscode/kutil/tools/analytics"
@@ -52,6 +53,9 @@ const (
 
 	RepositoryFinalizer = "stash"
 	SnapshotIDLength    = 8
+
+	ModelSidecar = "sidecar"
+	ModelCronJob = "cronjob"
 )
 
 var (
@@ -689,4 +693,17 @@ func HasOldReplicaAnnotation(k8sClient *kubernetes.Clientset, namespace string, 
 	}
 
 	return meta.HasKey(workloadAnnotation, AnnotationOldReplica)
+}
+func BackupModel(kind string) string {
+
+	switch kind {
+
+	case workload_api.KindDeployment, workload_api.KindReplicaSet, workload_api.KindReplicationController, workload_api.KindStatefulSet, workload_api.KindDaemonSet:
+		return ModelSidecar
+
+	default:
+		return ModelCronJob
+
+	}
+
 }
